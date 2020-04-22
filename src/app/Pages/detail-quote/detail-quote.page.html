@@ -151,6 +151,7 @@
               <ion-label class="ion-no-margin">
                 <h2 [innerHTML]="sd.quote_title" class="_primary ion-text-wrap boldText"></h2>
               </ion-label>
+              <ion-text color="primary" slot="end">{{sd?.scope_price | currency:'USD':'symbol':'1.2-2'}}</ion-text>
             </ion-item>
             <ion-list *ngIf="sd?.scopeData?.length || sd?.scopeData" class="ion-no-padding">
               <ng-container *ngFor="let s of sd.scopeData">
