@@ -488,7 +488,7 @@
     <form [formGroup]="commentForm" (keydown.enter)="$event.preventDefault()">
       <app-image-row class="uploaded-attachments uploaded-attachments-comment" [filesItems]="tempFileArr" canDelete="true" (onClickTrigger)="onTempDeleteFile($event)"></app-image-row>
     <ion-item lines="none" [ngClass]="!!vCheck('this_input','_INPUT') ? 'ion-no-margin ion-no-padding error-comment':'ion-no-margin ion-no-padding'">
-      <ion-textarea class="ion-no-margin ion-no-padding" formControlName="this_input" placeholder="Share something here..." (ionFocus)="scrollBottom(300)"></ion-textarea>
+      <ion-textarea rows="2" class="ion-no-margin ion-no-padding" formControlName="this_input" placeholder="Share something here..." (ionFocus)="scrollBottom(300)"></ion-textarea>
       <ion-button fill="clear" slot="end" class="ion-no-margin myRippleBtn" (click)="addNewFile()" [disabled]="tempFileArr.length >= 5"><ion-icon name="md-images"></ion-icon></ion-button>
       <ion-button fill="clear" slot="end" class="ion-no-margin myRippleBtn" (click)="btn('addProjectComment')"><ion-icon name="ios-send"></ion-icon></ion-button>
     </ion-item>
