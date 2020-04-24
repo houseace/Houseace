@@ -273,7 +273,7 @@
           </ion-label>
         </ion-item>
         <ion-list>
-          <ion-item class="itemMinH25" lines="none" *ngIf="userType !== _UT.CONTRACTOR">
+          <ion-item class="itemMinH25" lines="none" *ngIf="userType !== _UT.CONTRACTOR && userType !== _UT.CLIENT">
             <ion-button slot="start" fill="clear" class="ion-text-capitalize ion-no-margin noPaddingStart" (click)="OpenAddPeopleSelect()"><ion-icon name="add-circle-outline"></ion-icon> Add People
             </ion-button>
           </ion-item>
