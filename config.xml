@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="dev.houseace.sgtech" version="0.1.8" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="dev.houseace.sgtech" version="0.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Houseace</name>
     <description>Houseace is the simple, smart way to get your project done. Our easy-to-use platform allows homeowners to see their exact project price, including labour and material in minutes. And our dedicated personal service on each step makes the process to update your home more simple and more transparent.</description>
     <author email="02baweja@gmail.com" href="https://satgurutechnologies.com">Satguru Technologies Team</author>

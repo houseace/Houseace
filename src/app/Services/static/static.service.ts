@@ -361,9 +361,13 @@ export class StaticService {
     return (userType === USER_TYPES.CONTRACTOR || userType === USER_TYPES.CLIENT);
   }
   static toDateTime(inputDate) {
-    const sD = inputDate.split('/')[0];
-    const sM = inputDate.split('/')[1];
-    const sY = inputDate.split('/')[2];
-    return sY + '/' + sM + '/' + sD;
+    if (inputDate) {
+      const sD = inputDate.split('/')[0];
+      const sM = inputDate.split('/')[1];
+      const sY = inputDate.split('/')[2];
+      return sY + '/' + sM + '/' + sD;
+    } else {
+      return null;
+    }
   }
 }

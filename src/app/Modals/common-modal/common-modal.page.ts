@@ -52,12 +52,11 @@ export class CommonModalPage implements OnInit {
       }
       case 'manageProjectActions': {
         this.cModalForm = (this.cMData.action === 'change_status') ? StaticService.getThisInputExtraForm() : StaticService.getThisInputForm();
-        StaticService.setFormVal(this.cModalForm.controls, 'this_input', (this.cMData.action === 'start_date') ? StaticService.toDateTime(this.cMData.inputValue) : this.cMData.inputValue);
+        StaticService.setFormVal(this.cModalForm.controls, 'this_input', (this.cMData.action === 'start_date' && this.cMData.inputValue) ? StaticService.toDateTime(this.cMData.inputValue) : this.cMData.inputValue);
         if (this.cMData.action === 'change_status') {
           StaticService.setFormVal(this.cModalForm.controls, 'input_extra', this.cMData.inputValueBefore);
         }
         this.showFootBtn = 1; this.footBtnTxt = 'Save';
-        console.log('sdsds', StaticService.toDateTime(this.cMData.inputValue));
         break;
       }
       case 'addProjectComment': {
