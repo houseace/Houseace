@@ -2,6 +2,14 @@ ion-toolbar{
   ion-title{
     font-size: inherit;
   }
+  .priceTitle{
+    padding-left: unset;
+    padding-right: unset;
+    -webkit-padding-start: 7px;
+    padding-inline-start: 7px;
+    -webkit-padding-end: 7px;
+    padding-inline-end: 7px;
+  }
 }
 .RelativeContent{
   position: relative;
@@ -32,5 +40,19 @@ p.ORScheduleOptions {
     --border-radius: 0 !important;
     border-radius: 0 !important;
     z-index: 9;
+  }
+}
+.contractorPriceInput{
+  position: relative;
+  padding: 0 0 0 33px !important;
+  .dollar-icon-left{
+    position: absolute;
+    padding: 13.5px;
+    left: -1px;
+  }
+}
+.ios {
+  .cPriceToolbar{
+    --min-height: 55px;
   }
 }

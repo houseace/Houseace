@@ -6,12 +6,12 @@
           <ion-list>
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Title</ion-label>
-              <ion-input class="myBorderInput" (keyup.enter)="saveForm()" formControlName="title" placeholder="Title"></ion-input>
+              <ion-input autocapitalize="sentences"   class="myBorderInput" (keyup.enter)="saveForm()" formControlName="title" placeholder="Title"></ion-input>
             </ion-item>
             <app-error [errorMsg]="vCheck(X.controls, 'title','_INPUT')"></app-error>
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Price</ion-label>
-              <ion-input type="number" min="0" class="myBorderInput" formControlName="percent" placeholder="0.00"></ion-input>
+              <ion-input autocapitalize="sentences"   type="number" min="0" class="myBorderInput" formControlName="percent" placeholder="0.00"></ion-input>
             </ion-item>
             <app-error [errorMsg]="vCheck(X.controls, 'percent','_INPUT')"></app-error>
             <ion-item class="ion-no-padding" lines="none">
@@ -21,7 +21,7 @@
             <app-error [errorMsg]="vCheck(X.controls,'due_date', '_SELECT')"></app-error>
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Description</ion-label>
-              <ion-textarea formControlName="description" rows="3" class="myBorderInput" placeholder="Description" ></ion-textarea>
+              <ion-textarea autocapitalize="sentences"  formControlName="description" rows="3" class="myBorderInput" placeholder="Description" ></ion-textarea>
             </ion-item>
               <ion-button slot="end" fill="clear" (click)="removeForm(ix)"><ion-icon class="marginInlineEnd16 ion-no-padding" name="trash"></ion-icon> Remove</ion-button>
           </ion-list>

@@ -44,6 +44,7 @@
     "@ionic-native/status-bar": "^5.21.6",
     "@ionic-native/toast": "^5.21.6",
     "@ionic/angular": "^4.11.10",
+    "@ionic/cli": "^6.9.2",
     "@ionic/storage": "^2.2.0",
     "cordova-android": "8.1.0",
     "cordova-browser": "6.0.0",

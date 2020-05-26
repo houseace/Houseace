@@ -1,7 +1,7 @@
 import {Component, ElementRef} from '@angular/core';
 import {AuthService} from '../../core/auth/auth.service';
 import {HelperService} from '../../Services/Helper/helper.service';
-import {IMGS, PURPOSE, STORAGE_GET_DATA, USER_TYPES, VALIDATION_MSG, VARS, FILE_VAR} from '../../app-constants.service';
+import {IMGS, PURPOSE, STORAGE_GET_DATA, USER_TYPES, VALIDATION_MSG, VARS, FILE_VAR, USER_ACCOUNT_TYPE_REG} from '../../app-constants.service';
 import {NavController} from '@ionic/angular';
 import {INPUT_TYPE_NAME} from '../../keyOf';
 import {FunService} from '../../Services/fun/fun.service';
@@ -17,7 +17,7 @@ import {Storage} from '@ionic/storage';
   styleUrls: ['account.page.scss']
 })
 export class AccountPage {
-  _UT = USER_TYPES;
+  _UT = USER_TYPES; _AT: any = _.toArray(USER_ACCOUNT_TYPE_REG);
   loadingUser = true; _USER: any; user: any; userType: any; personal: any; company: any;
   _SEGMENTS: any = []; currentSegment = 'Personal';
   personalForm: any; personalFormC: any;
@@ -26,6 +26,7 @@ export class AccountPage {
   tempFileArr: any = []; tempFilesToUp: any = []; tempErrorFileSelect = null;
   tempFileArr2: any = []; tempFilesToUp2: any = []; tempErrorFileSelect2 = null;
   cForm: any; cFormC: any; purpose: any; tempimg: any; tempimg2: any; UData: any;
+  _SERVICES_ARR: any = [];
   constructor(private storage: Storage,
               public auth: AuthService,
               public helper: HelperService,
@@ -64,10 +65,12 @@ export class AccountPage {
           if (this.currentSegment === 'Personal') {
             this.personalForm = StaticService.getPersonalForm();
             this.personalFormC = this.personalForm.controls;
+            StaticService.onChangeUserRole(this.personalFormC, this.userType);
           }
           this.companySettingForm = StaticService.getSettingsForm(); this.companySettingFormC = this.companySettingForm.controls;
           this.securityForm = StaticService.getSecurityForm(); this.securityFormC = this.securityForm.controls;
           this.loadingUser = false;
+          this.getServiceList();
         });
       } else {
         this._USER = this.user = this.userType = null;
@@ -124,12 +127,18 @@ export class AccountPage {
                 StaticService.setFormVal(this.personalFormC, 'service_seeking', this.personal.service_seeking);
                 StaticService.setFormVal(this.personalFormC, 'facebook_page', this.personal.licence_no);
                 StaticService.setFormVal(this.personalFormC, 'trade', this.personal.ABN);
+                // StaticService.setFormVal(this.personalFormC, 'trade', this.personal.trade);
                 StaticService.setFormVal(this.personalFormC, 'hi_pages', this.personal.trade);
                 StaticService.setFormVal(this.personalFormC, 'areas_serviced', this.personal.area_service);
+                StaticService.setFormVal(this.personalFormC, 'radius', this.personal.radius);
+                StaticService.setFormVal(this.personalFormC, 'services', true);
                 this.company = res.data.company_settings;
                 this.tempimg2 = this.company.logo.logo;
               }
               this.loadingUser = false;
+              StaticService.markFormGroupUnTouched(this.personalFormC);
+              StaticService.markFormGroupUnTouched(this.companySettingFormC);
+              StaticService.markFormGroupUnTouched(this.securityFormC);
             }).catch(() => {});
           } else {
             this.loadingUser = false;
@@ -305,7 +314,10 @@ export class AccountPage {
     }).catch(() => {});
   }
   uploadFilePhoto(type, data = null) {
-    this.uploader.uploadFile().then((files: any) => {
+    this.uploader.uploadFile(FILE_VAR.SUB_HEADER1, true, {
+      acceptFiles: FILE_VAR.ALLOWED_FILE_TYPE,
+      maxFileSize: FILE_VAR.MAX_FILE_SIZE_DEFAULT
+    }).then((files: any) => {
       this.uploadDoc(files, type, data);
     }).catch(() => {});
   }
@@ -317,7 +329,7 @@ export class AccountPage {
       formData.append('current_user_id', userId);
       formData.append('type', type);
       _.forEach(files, file => {
-        formData.append('file', file.imgBlobs, file.myFile.name);
+        formData.append('file[]', file.imgBlobs, file.myFile.name);
       });
 
       this.api.apiCall(PURPOSE.UPLOAD_LICENCE_OR_INSURANCE_DOCUMENT, formData, true, true, '2000', 'bottom', false).then((res: any) => {
@@ -326,5 +338,13 @@ export class AccountPage {
         }
       }).catch(() => {});
     }
+  }
+
+  getServiceList() {
+    this.api.apiCall(PURPOSE.GET_SERVICES, {}, false, false).then((res: any) => {
+      if (ApiService._successRes(res)) {
+        this._SERVICES_ARR = res.data;
+      }
+    }).catch(() => {});
   }
 }

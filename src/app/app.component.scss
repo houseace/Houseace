@@ -617,9 +617,10 @@ ion-action-sheet{
 .searchQuotes, .manageQuoteTitle{
   --height: 250px !important;
 }
-.manageTimeframe, .manageSaveDate, .manageQuoteStatus{
+.manageTimeframe, .manageSaveDate, .manageQuoteStatus, .editContractorPriceModal{
   --height: 200px !important;
 }
+
 .notificationsModal, .msgsModal{
   --border-radius: 0px !important;
   --height: 90vh !important;
@@ -718,4 +719,20 @@ app-login{
       color: var(--ion-color-white);
     }
   }
+}
+.customMultipleSelect{
+  .alert-wrapper{
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 13px 13px 0 0 !important;
+    .alert-checkbox-group{
+      max-height: 100% !important;
+    }
+  }
+}
+.headTitle{
+  position: relative;
+  text-align: start;
 }

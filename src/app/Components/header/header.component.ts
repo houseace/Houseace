@@ -51,10 +51,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy() {
     try {
-      this.msgInterval.clearInterval();
+      clearInterval(this.msgInterval);
     } catch (e) {}
     try {
-      this.notInterval.clearInterval();
+      clearInterval(this.notInterval);
     } catch (e) {}
   }
   onBtnTrigger(btn: any, data = null) {

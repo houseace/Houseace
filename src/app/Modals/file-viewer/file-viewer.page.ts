@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import {IMGS} from '../../app-constants.service';
+import {UploaderService} from '../../Services/uploader/uploader.service';
 
 @Component({
   selector: 'app-file-viewer',
@@ -8,11 +9,13 @@ import {IMGS} from '../../app-constants.service';
   styleUrls: ['./file-viewer.page.scss'],
 })
 export class FileViewerPage implements OnInit {
-  IMGS = IMGS;
+  IMGS = IMGS; slideIndex = 0;
   showSlides = false; slidesOptions: any; filesArray: any = [];
   constructor(private navParams: NavParams,
-              private modalCtrl: ModalController) {
+              private modalCtrl: ModalController,
+              private uploader: UploaderService) {
     this.filesArray = this.navParams.get('filesArray') || [];
+    this.slideIndex = this.navParams.get('initialSlide') || 0;
   }
 
   ngOnInit() {
@@ -20,8 +23,9 @@ export class FileViewerPage implements OnInit {
       this.showSlides = true;
     }, 0);
     this.slidesOptions = {
-      initialSlide: this.navParams.get('initialSlide') || 0,
+      initialSlide: this.slideIndex,
       slidesPerView: 1,
+      passiveListeners: false,
       coverflowEffect: {
         rotate: 50,
         stretch: 0,
@@ -107,6 +111,17 @@ export class FileViewerPage implements OnInit {
         }
       }
     };
+  }
+  async slideChange(ev) {
+    console.log('ev', ev);
+    try {
+      const ss = await ev.getActiveIndex();
+      console.log(ss);
+    } catch (e) {
+    }
+  }
+  async downloadFile() {
+    this.uploader.downloadFile(this.filesArray[this.slideIndex].url);
   }
   async dismissModal() {
     await this.modalCtrl.dismiss();

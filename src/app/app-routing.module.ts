@@ -11,6 +11,8 @@ const routes: Routes = [
   { path: 'test', loadChildren: './Pages/test/test.module#TestPageModule' },
   { path: 'view-profile', loadChildren: './Pages/view-profile/view-profile.module#ViewProfilePageModule' },
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
+  { path: 'edit-scope', loadChildren: './Pages/edit-scope/edit-scope.module#EditScopePageModule' },
+  { path: 'add-scope', loadChildren: './Pages/add-scope/add-scope.module#AddScopePageModule' },
 
 ];
 @NgModule({

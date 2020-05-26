@@ -9,6 +9,9 @@
 
       <!--<ion-text color="primary" class="ion-float-end smallText">{{data?.project_total | currency:'USD':'symbol':'1.2-2'}}</ion-text>-->
     </ion-title>
+    <ion-button [disabled]="!data" size="small" slot="end" fill="clear" class="myRippleBtn" (click)="btn('removeProject')" *ngIf="(userType === _UT.HEAD_CONTRACTOR || userType === _UT.AGENT)">
+      <ion-icon name="md-trash"></ion-icon>
+    </ion-button>
     <ion-button [disabled]="!data" size="small" slot="end" fill="clear" class="myRippleBtn btnWithDot" (click)="btn('_MESSAGE')">
       <ion-icon name="mail"></ion-icon>
       <ion-text *ngIf="_MSG?.length" color="success">•</ion-text>
@@ -19,8 +22,8 @@
     </ion-button>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-segment (ionChange)="currentSegment = $event.detail.value; scrollBottom()" [value]="currentSegment" mode="md">
-      <ion-segment-button mode="md" [value]="sg.val" *ngFor="let sg of _SEGMENTS">
+    <ion-segment (ionChange)="onChangeSegment($event)" [value]="currentSegment" mode="md">
+      <ion-segment-button mode="md" [value]="sg.val" *ngFor="let sg of _SEGMENTS" [ngClass]="(currentSegment === sg.val) ? 'segment-button-checked': ''">
         <ion-icon [name]="sg.iconName" [src]="sg.srcName"></ion-icon>
       </ion-segment-button>
     </ion-segment>
@@ -117,7 +120,7 @@
                 <ion-icon [name]="star.iconName" [class]="star.className" ></ion-icon>
               </ion-button>
               <ion-item class="ion-no-padding" lines="none">
-                <ion-textarea rows="3" class="myBorderInput" (keyup.enter)="SaveReviewSubmit()" formControlName="review"></ion-textarea>
+                <ion-textarea autocapitalize="sentences" rows="3" class="myBorderInput" (keyup.enter)="SaveReviewSubmit()" formControlName="review"></ion-textarea>
               </ion-item>
               <app-error [errorMsg]="vCheck1('review','_INPUT')"></app-error>
               <ion-button type="button" class="ion-no-margin noBorderRadius" expand="full" color="primary" (click)="SaveReviewSubmit()">Save Review</ion-button>
@@ -145,13 +148,16 @@
             <ion-label class="ion-no-margin itemMinH20">
               <h2>Quote Summary</h2>
             </ion-label>
+            <ion-button *ngIf="userType === _UT.AGENT || userType === _UT.CLIENT || userType === _UT.HEAD_CONTRACTOR" size="small" slot="end" class="ion-text-capitalize ion-no-margin noShadowBtn" (click)="btn('addNewScope')"><ion-icon name="add-circle-outline"></ion-icon> Add New Scope</ion-button>
           </ion-item>
           <ng-container *ngFor="let sd of data.scopeDetails">
             <ion-item class="ion-no-padding itemMinH30" lines="none">
               <ion-label class="ion-no-margin">
                 <h2 [innerHTML]="sd.quote_title" class="_primary ion-text-wrap boldText"></h2>
+                <p class="_primary" *ngIf="userType !== _UT.CONTRACTOR">{{sd?.scope_price | currency:'USD':'symbol':'1.2-2'}}</p>
               </ion-label>
-              <ion-text color="primary" slot="end">{{sd?.scope_price | currency:'USD':'symbol':'1.2-2'}}</ion-text>
+              <ion-button *ngIf="data.hide_edit_scope" fill="clear" class="ion-no-margin" slot="end" (click)="btn('editScope', sd?.id)"><ion-icon name="md-create"></ion-icon></ion-button>
+              <ion-button fill="clear" class="ion-no-margin" slot="end" (click)="btn('removeScope', sd?.id)"><ion-icon name="md-trash"></ion-icon></ion-button>
             </ion-item>
             <ion-list *ngIf="sd?.scopeData?.length || sd?.scopeData" class="ion-no-padding">
               <ng-container *ngFor="let s of sd.scopeData">
@@ -175,11 +181,17 @@
                       </ion-item>
                     </ng-template>
                     <ng-template [ngSwitchCase]="AFL.MOODS">
-                      <!--<ion-item class="ion-no-padding" lines="full">
+                      <ion-item class="ion-no-padding" lines="full">
                         <ion-label>
                           <h5>{{s.section_title}}</h5>
+                          <ng-container *ngIf="!s?.section_values?.length">
+                            <p class="ion-text-wrap smallMarginBottom halfOpacity">{{s?.section_values | viewIn : 'N/A'}}</p>
+                          </ng-container>
+                          <ng-container *ngIf="s.section_values?.length">
+                            <p class="ion-text-wrap smallMarginBottom halfOpacity" *ngFor="let mv of s.section_values">{{mv | viewIn : 'N/A'}}</p>
+                          </ng-container>
                         </ion-label>
-                      </ion-item>-->
+                      </ion-item>
                     </ng-template>
                     <ng-template [ngSwitchCase]="AFL.ADDITIONAL_NOTES">
                       <ion-item class="ion-no-padding" lines="full">
@@ -193,7 +205,7 @@
                       <ion-item class="ion-no-padding" lines="full">
                         <ion-label>
                           <h5>{{s.section_title}}</h5>
-                          <p class="ion-float-left">{{s.section_values.length + 'x' + s.section_values.width}} - Area: <ion-chip class="customChip halfOpacity">{{s.section_values.wallarea}}m2</ion-chip></p>
+                          <p class="ion-float-left">{{s.section_values.length + 'x' + s.section_values.width}} - Area: <ion-chip class="customChip halfOpacity">{{s.section_values.wallarea | number:'1.0-2'}}m2</ion-chip></p>
                         </ion-label>
                       </ion-item>
                     </ng-template>
@@ -201,7 +213,7 @@
                       <ion-item class="ion-no-padding" lines="full">
                         <ion-label>
                           <h5>{{s.section_title}}</h5>
-                          <p class="ion-float-left">{{s.section_values.width + 'x' + s.section_values.length}} - Area: <ion-chip class="customChip halfOpacity">{{s.section_values.floorarea}}m2</ion-chip></p>
+                          <p class="ion-float-left">{{s.section_values.width + 'x' + s.section_values.length}} - Area: <ion-chip class="customChip halfOpacity">{{s.section_values.floorarea | number:'1.0-2'}}m2</ion-chip></p>
                         </ion-label>
                       </ion-item>
                     </ng-template>
@@ -237,14 +249,29 @@
                         <ion-label>
                           <h5>{{s.section_title}}</h5>
                           <div>
-                            <p class="ion-float-left halfOpacity"><ion-chip class="customChip noBackground noMarginLeft">{{s.section_values.width + 'x' + s.section_values.length + 'x' + s.section_values.height}}</ion-chip></p>
-                            <p class="marginInStart4 ion-float-left">Floor Area: <ion-chip class="customChip noBackground halfOpacity">{{s.section_values.floorarea | number:'1.0-2'}} m2</ion-chip></p>
-                            <p class="marginInStart4 ion-float-left">Wall Area: <ion-chip class="customChip noBackground halfOpacity">{{s.section_values.wallarea | number:'1.0-2'}} m2</ion-chip></p>
+                            <p class="ion-float-left halfOpacity"><ion-chip class="customChip noMarginLeft">{{s.section_values.width + 'x' + s.section_values.length + 'x' + s.section_values.height}}</ion-chip></p>
+                            <p class="marginInStart4 ion-float-left">Floor Area: <ion-chip class="customChip halfOpacity">{{s.section_values.floorarea | number:'1.0-2'}} m2</ion-chip></p>
+                            <p class="marginInStart4 ion-float-left">Wall Area: <ion-chip class="customChip halfOpacity">{{s.section_values.wallarea | number:'1.0-2'}} m2</ion-chip></p>
                           </div>
                         </ion-label>
                       </ion-item>
                     </ng-template>
-                    <ng-template [ngSwitchCase]="AFL.DISPLAY_REPEATER"></ng-template>
+                    <ng-template [ngSwitchCase]="AFL.DISPLAY_REPEATER">
+                      <ng-container *ngIf="s?.section_values?.length">
+                        <ion-item class="ion-no-padding" lines="full">
+                          <ion-label>
+                            <h5>{{s.section_title}}</h5>
+                            <ion-item class="ion-no-padding" lines="full" *ngFor="let dr of s.section_values">
+                              <ion-label class="ion-no-margin">
+                                <h5>{{_.isObject(dr?.customQuoteFieldTitle) ? dr?.customQuoteFieldTitle.customQuoteFieldTitle : dr?.customQuoteFieldTitle}}</h5>
+                                <p class="ion-text-wrap halfOpacity">{{(_.isObject(dr?.customQuoteFieldPrice) ? _.toNumber(dr?.customQuoteFieldPrice.customQuoteFieldPrice) : _.toNumber(dr?.customQuoteFieldPrice)) | viewIn:0 | currency:'USD':'symbol':'1.2-2' }}</p>
+                                <p class="ion-text-wrap halfOpacity">{{(_.isObject(dr?.customQuoteFieldDescription) ? dr?.customQuoteFieldDescription.customQuoteFieldDescription : dr?.customQuoteFieldDescription) | viewIn:'-' }}</p>
+                              </ion-label>
+                            </ion-item>
+                          </ion-label>
+                        </ion-item>
+                      </ng-container>
+                    </ng-template>
                   </ng-container>
                 </ng-container>
               </ng-container>
@@ -260,13 +287,20 @@
               <ion-slide *ngFor="let u of data.project_team; let i = index" class="ion-text-center">
                 <div class="team-div">
                   <ion-avatar>
-                    <img alt="user" [src]="helper._IMG.DEFAULT_NO_IMG" [errorImage]="helper._IMG.DEFAULT_NO_IMG" [lazyLoad]="u.user_avatar">
+                    <img alt="user" [src]="helper._IMG.DEFAULT_NO_IMG" [errorImage]="helper._IMG.DEFAULT_USER" [lazyLoad]="u.user_avatar">
                   </ion-avatar>
+                  <ng-container *ngIf="userType === _UT.HEAD_CONTRACTOR || userType === _UT.AGENT">
+                    <ion-button *ngIf="(u?.user_role === _UT.SUPPLIER || u?.user_role === _UT.CONTRACTOR || u?.user_role === _UT.AGENT)" fill="clear" size="small" class="ion-no-margin ion-no-padding floating-trash-icon" (click)="btn('removeTeamUser', u)"><ion-icon name="close" class="_white"></ion-icon></ion-button>
+                  </ng-container>
                   <ion-button fill="clear" class="ion-no-margin ion-no-padding floating-call-icon" [href]="'tel:'+u.user_phone">
                     <ion-icon name="ios-call" color="primary"></ion-icon>
                   </ion-button>
                   <p class="ion-text-center ion-no-margin xSmallText ion-text-wrap">{{u.role}}</p>
                   <p class="ion-text-center ion-no-margin xSmallText boldText ion-text-wrap">{{u.user_firstname}} {{u.user_lastname}}</p>
+                  <!--<ng-container *ngIf="userType === _UT.HEAD_CONTRACTOR || userType === _UT.AGENT">
+                    <ion-button *ngIf="(u?.user_role === _UT.SUPPLIER || u?.user_role === _UT.CONTRACTOR || u?.user_role === _UT.AGENT)" size="small" class="ion-text-capitalize noShadowBtn" (click)="btn('removeTeamUser', u)">Delete</ion-button>
+                  </ng-container>-->
+                  <ion-button *ngIf="(u?.user_role === _UT.CONTRACTOR && userType !== _UT.CONTRACTOR && userType !== _UT.CLIENT)" size="small" class="ion-text-capitalize noShadowBtn" (click)="btn('editContractorPrice', u)">Edit Price</ion-button>
                 </div>
               </ion-slide>
             </ion-slides>
@@ -325,7 +359,7 @@
                   <form [formGroup]="replyForm" (keydown.enter)="$event.preventDefault()">
                     <app-image-row class="uploaded-attachments uploaded-attachments-comment" [filesItems]="tempFileArrReply" canDelete="true" (onClickTrigger)="onTempDeleteFile($event, true)"></app-image-row>
                     <ion-item lines="none" class="ion-no-margin ion-no-padding">
-                      <ion-textarea class="ion-no-margin ion-no-padding reply_input" formControlName="this_input" placeholder="Reply here..."></ion-textarea>
+                      <ion-textarea autocapitalize="sentences"  class="ion-no-margin ion-no-padding reply_input" formControlName="this_input" placeholder="Reply here..."></ion-textarea>
                       <ion-button fill="clear" slot="end" class="ion-no-margin myRippleBtn" (click)="addNewFile(true)" [disabled]="tempFileArrReply.length >= 5"><ion-icon name="md-images"></ion-icon></ion-button>
                       <ion-button fill="clear" slot="end" class="ion-no-margin myRippleBtn" (click)="btn('addProjectReply', comment)"><ion-icon name="ios-send"></ion-icon></ion-button>
                     </ion-item>
@@ -366,6 +400,7 @@
               <ion-button (click)="btn('uploadSchedule', (scIndex+1))" *ngIf="!data.is_client" fill="clear" expand="full" size="large" class="ion-text-capitalize ion-no-margin dottedBorder _medium smallText uploadBtn">
                 <ion-icon [src]="helper._IMG.CLOUD_BACKUP_UP_ARROW"></ion-icon>&nbsp;Upload Photos here
               </ion-button>
+              <ion-button (click)="btn('markScheduleDone', (scIndex+1))" *ngIf="!schData.done" size="small" class="ion-text-capitalize noShadowBtn ion-no-margin"><ion-icon name="done-all"></ion-icon>&nbsp;Mark Done</ion-button>
             </ion-label>
           </ion-item>
         </div>
@@ -488,7 +523,7 @@
     <form [formGroup]="commentForm" (keydown.enter)="$event.preventDefault()">
       <app-image-row class="uploaded-attachments uploaded-attachments-comment" [filesItems]="tempFileArr" canDelete="true" (onClickTrigger)="onTempDeleteFile($event)"></app-image-row>
     <ion-item lines="none" [ngClass]="!!vCheck('this_input','_INPUT') ? 'ion-no-margin ion-no-padding error-comment':'ion-no-margin ion-no-padding'">
-      <ion-textarea rows="2" class="ion-no-margin ion-no-padding" formControlName="this_input" placeholder="Share something here..." (ionFocus)="scrollBottom(300)"></ion-textarea>
+      <ion-textarea autocapitalize="sentences" rows="2" class="ion-no-margin ion-no-padding" formControlName="this_input" placeholder="Share something here..." (ionFocus)="scrollBottom(300)"></ion-textarea>
       <ion-button fill="clear" slot="end" class="ion-no-margin myRippleBtn" (click)="addNewFile()" [disabled]="tempFileArr.length >= 5"><ion-icon name="md-images"></ion-icon></ion-button>
       <ion-button fill="clear" slot="end" class="ion-no-margin myRippleBtn" (click)="btn('addProjectComment')"><ion-icon name="ios-send"></ion-icon></ion-button>
     </ion-item>

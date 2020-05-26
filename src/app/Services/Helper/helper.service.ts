@@ -60,6 +60,18 @@ export class HelperService {
   getCDT(format = null, date = null) {
     return format ? momentTz.tz(date ? date : moment().toDate(), VARS.APP_TIMEZONE).format(format) : momentTz.tz(date ? date : moment().toDate(), VARS.APP_TIMEZONE);
   }
+  async presentAlert(msg, subHeader = null, header = null, okBtn: any = ['OK']) {
+    this.dismissLoading();
+    if (msg) {
+      const alert = await this.alertCtrl.create({
+        header,
+        subHeader,
+        message: msg,
+        buttons: okBtn
+      });
+      await alert.present();
+    }
+  }
   async presentLoadingWithOptions(msg= 'Please wait...', customCssClass= 'myLoader') {
     this.dismissLoading();
     this.loading = await this.loadingCtrl.create({
@@ -255,10 +267,10 @@ export class HelperService {
       this.statusBar.overlaysWebView(false);
     } catch (e) {}
   }
-  pushRootPage(page, navData) {
+  pushRootPage(page, navData = null) {
     navData ? this.navCtrl.navigateRoot(page, {state: navData }).catch((e) => { console.log(e); }) : this.navCtrl.navigateRoot(page).catch((e) => { console.log(e); });
   }
-  pushPage(page, navData) {
+  pushPage(page, navData = null) {
     navData ? this.navCtrl.navigateForward(page, {state: navData }).catch((e) => { console.log(e); }) : this.navCtrl.navigateForward(page).catch((e) => { console.log(e); });
   }
   navParams() {
@@ -275,6 +287,9 @@ export class HelperService {
   }
   popPage() {
     this.navCtrl.pop().catch((e) => console.log(e));
+  }
+  popToPage(url, navData = null) {
+    navData ? this.navCtrl.navigateBack(url, {state: navData }).catch((e) => { console.log(e); }) : this.navCtrl.navigateBack(url).catch((e) => { console.log(e); });
   }
   getApp(type = 'VersionNumber') {
     return new Promise(resolve => {
@@ -307,7 +322,6 @@ export class HelperService {
     return new Promise(async resolve => {
       const actionButtons = [];
       _.forEach(ADD_PEOPLE_SELECT, (val, key) => {
-        console.log('addpeople', val, key);
         actionButtons.push({
           text: val,
           cssClass: (selectedVal === key) ? 'action-sheet-selected' : '',

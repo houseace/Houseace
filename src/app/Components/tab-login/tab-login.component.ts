@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {INPUT_TYPE_NAME} from '../../keyOf';
-import {PURPOSE, USER_TYPES_REG} from '../../app-constants.service';
+import {PURPOSE, USER_ACCOUNT_TYPE_REG, USER_TYPES_REG, USER_TYPES_REG_TITLE} from '../../app-constants.service';
 import _ from 'lodash';
 import {StaticService} from '../../Services/static/static.service';
 import {ApiService} from '../../Services/api/api.service';
@@ -12,9 +12,10 @@ import {ApiService} from '../../Services/api/api.service';
   styleUrls: ['./tab-login.component.scss'],
 })
 export class TabLoginComponent implements OnInit {
-  @Input() public cssClassMain = '';
+  @Input() public cssClassMain = ''; _UTT = USER_TYPES_REG_TITLE;
   _UT: any = _.toArray(USER_TYPES_REG);
-  loginView: any;
+  _AT: any = _.toArray(USER_ACCOUNT_TYPE_REG);
+  loginView: any;  _SERVICES_ARR: any = []; // TODO
   loginForm: FormGroup; lFormC: any;
   registerForm: FormGroup; rFormC: any;
   forgotPassForm: FormGroup; fFormC: any;
@@ -26,6 +27,7 @@ export class TabLoginComponent implements OnInit {
     this.lFormC = this.loginForm.controls;
     this.rFormC = this.registerForm.controls;
     this.fFormC = this.forgotPassForm.controls;
+    this.getServiceList();
   }
   vCheck(fieldName, type: INPUT_TYPE_NAME, options: any = {}) {
     options.isRequired = true;
@@ -38,7 +40,7 @@ export class TabLoginComponent implements OnInit {
       this.loginView = 'LOGIN';
       this.registerForm.reset();
       this.forgotPassForm.reset();
-      this.rFormC.user_type.setValue(USER_TYPES_REG.CONTRACTOR);
+      this.rFormC.user_type.setValue(USER_TYPES_REG.HOMEOWNERS);
     } else if (view === 'REGISTER') {
       this.loginView = 'REGISTER';
       this.loginForm.reset();
@@ -61,5 +63,15 @@ export class TabLoginComponent implements OnInit {
     } else {
       StaticService.markFormGroupTouched(cForm , invalidElements);
     }
+  }
+  onChangeRole(formC, uType) {
+    StaticService.onChangeUserRole(formC, uType);
+  }
+  getServiceList() {
+    this.api.apiCall(PURPOSE.GET_SERVICES, {}, false, false).then((res: any) => {
+      if (ApiService._successRes(res)) {
+        this._SERVICES_ARR = res.data;
+      }
+    }).catch(() => {});
   }
 }

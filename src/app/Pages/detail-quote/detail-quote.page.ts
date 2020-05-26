@@ -38,16 +38,12 @@ export class DetailQuotePage implements OnInit {
   selectedStar: any = 5; showReviewForm = false;
   paymentTabSeg = [{val: 'PaymentSubTab', title: 'Payments'}, {val: 'otherPaymentSubTab', title: 'Other Payment'}]; cPaymentTab = 'PaymentSubTab';
   msgInterval: any; notInterval: any;
-  constructor(private activatedRoute: ActivatedRoute,
-              private router: Router,
-              private api: ApiService,
+  constructor(private api: ApiService,
               public helper: HelperService,
               private modalService: ModalService,
               private uploader: UploaderService,
-              private navCtrl: NavController,
               private el: ElementRef) {
-    this.activatedRoute.queryParams.subscribe(async () => {
-      const routParams = this.router.getCurrentNavigation().extras.state;
+    this.helper.navParams().then((routParams: any) => {
       if (routParams) {
         this.pId = routParams.pId;
         this.user = routParams.user;
@@ -58,7 +54,7 @@ export class DetailQuotePage implements OnInit {
             {val: 'Activity', iconName: 'md-chatboxes', srcName: ''},
             {val: 'Project',  iconName: 'md-list-box', srcName: ''},
             {val: 'Schedule', iconName: 'md-calendar', srcName: ''},
-            ];
+          ];
         } else {
           this._SEGMENTS = [
             {val: 'Activity', iconName: 'md-chatboxes', srcName: ''},
@@ -72,16 +68,19 @@ export class DetailQuotePage implements OnInit {
         this.getActivities();
         this.getMessage();
       }
-    });
+    }).catch(() => {});
     _.forEach(MANAGE_QUOTE_STATUS, (val, key) => {
       this.statusArr.push({title: key, val});
     });
   }
   ngOnInit() {
-    this.getDetails();
+    // this.getDetails();
+  }
+  onChangeSegment(ev) {
+    this.currentSegment = ev.detail.value;
+    this.scrollBottom();
   }
   scrollBottom(timeout = 0) {
-    console.log('sss');
     if (this.currentSegment === 'Activity') {
       setTimeout(() => {
         this.scrollVanish.scrollToBottom(150);
@@ -90,13 +89,14 @@ export class DetailQuotePage implements OnInit {
   }
   ionViewWillLeave() {
     try {
-      this.msgInterval.clearInterval();
+      clearInterval(this.msgInterval);
     } catch (e) {}
     try {
-      this.notInterval.clearInterval();
+      clearInterval(this.notInterval);
     } catch (e) {}
   }
   ionViewWillEnter() {
+    this.getDetails();
     this.msgInterval = setInterval(() => {
       this.getMessage();
     }, 10000);
@@ -328,8 +328,90 @@ export class DetailQuotePage implements OnInit {
       }
       case 'InvoiceDetail': {
         if (other) {
-          this.navCtrl.navigateForward(APP_PAGES.INVOICE_DETAIL, {state: { invoiceId: data, user: this.user}}).catch(() => {});
+          this.helper.pushPage(APP_PAGES.INVOICE_DETAIL, { invoiceId: data, user: this.user});
         }
+        break;
+      }
+      case 'removeScope': {
+        this.helper.presentAlertConfirm('Confirm', 'Do you really want to remove this scope?', 'Remove', 'No').then(async (isConfirm) => {
+          if (isConfirm) {
+            this.helper.presentLoadingWithOptions('Removing Scope...').catch(() => {});
+            this.api.apiCall(PURPOSE.REMOVE_PROJECT_SCOPE, {
+              project_id: this.pId,
+              current_user_id: StaticService.getUser(this.user, STORAGE_GET_DATA.USER_ID),
+              scope_id: data
+            }, true).then((res: any) => {
+              if (ApiService._successRes(res)) {
+                this.getDetails();
+              }
+            });
+          }
+        }).catch(() => {});
+        break;
+      }
+      case 'addNewScope': {
+        this.helper.pushPage(APP_PAGES.ADD_SCOPE, {projectId: this.pId, user : this.user});
+        break;
+      }
+      case 'editScope': {
+        this.helper.pushPage(APP_PAGES.EDIT_SCOPE, {projectId: this.pId, user : this.user, scopeId: data, timeframe: this.data.timeframe});
+        break;
+      }
+      case 'editContractorPrice': {
+        mType = 'editContractorPrice';
+        modalHead = 'Edit Contractor Price';
+        modalCssClass = 'editContractorPriceModal';
+        modalData = {
+          project_id: this.pId,
+          uType: 'contractor',
+          current_user_id : this.user.userId,
+          contractor: data
+        };
+        break;
+      }
+      case 'markScheduleDone': {
+        this.helper.presentLoadingWithOptions().catch(() => {});
+        this.api.apiCall(PURPOSE.MARK_SCHEDULE_DONE, {
+          project_id: this.pId,
+          current_user_id: StaticService.getUser(this.user, STORAGE_GET_DATA.USER_ID),
+          row: data,
+        }, true).then((res: any) => {
+          if (ApiService._successRes(res)) {
+            this.getDetails();
+          }
+        }).catch(() => {});
+        break;
+      }
+      case 'removeProject': {
+        this.helper.presentAlertConfirm('Confirm', 'Do you really want to remove this Project?', 'Remove', 'No').then(async (isConfirm) => {
+          if (isConfirm) {
+            this.helper.presentLoadingWithOptions('Removing Project...').catch(() => {});
+            this.api.apiCall(PURPOSE.REMOVE_PROJECT, {
+              projectId: this.pId
+            }, true).then((res) => {
+              if (ApiService._successRes(res)) {
+                this.helper.popPage();
+              }
+            });
+          }
+        }).catch(() => {});
+        break;
+      }
+      case 'removeTeamUser': {
+        this.helper.presentAlertConfirm('Confirm', 'Are you sure want to remove this user?', 'Remove', 'No').then(async (isConfirm) => {
+          if (isConfirm) {
+            this.helper.presentLoadingWithOptions('Removing User...').catch(() => {});
+            this.api.apiCall(PURPOSE.REMOVE_PEOPLE, {
+              projectId: this.pId,
+              type: data.user_role,
+              team_user_id: data.ID
+            }, true).then((res) => {
+              if (ApiService._successRes(res)) {
+                this.getDetails();
+              }
+            });
+          }
+        }).catch(() => {});
         break;
       }
       default: {
@@ -411,7 +493,7 @@ export class DetailQuotePage implements OnInit {
       formData.append('current_user_id', userId);
       formData.append('type', type);
       _.forEach(files, file => {
-        formData.append('file', file.imgBlobs, file.myFile.name);
+        formData.append('file[]', file.imgBlobs, file.myFile.name);
       });
       if (type === 'schedule') {
         formData.append('row', row);
@@ -425,16 +507,15 @@ export class DetailQuotePage implements OnInit {
   }
   OpenAddPeopleSelect() {
     this.helper.AddPeopleSelect().then((res) => {
-      console.log('userTypePeople', res);
       if (res) {
         const head = (res === 'head_clients') ? 'Add Quote Manager' : (res === 'head_suplliers') ? 'Add Supplier' : 'Add Contractor';
         const uDataList = {
           udata : (res === 'head_clients') ? this.data.user_list_by_type.head_clients : (res === 'head_suplliers') ? this.data.user_list_by_type.head_suplliers : this.data.user_list_by_type.head_contractors,
           uType : (res === 'head_clients') ? 'agent' : (res === 'head_suplliers') ? 'supplier' : 'contractor',
           current_user_id : this.user.userId,
-          project_id: this.pId
+          project_id: this.pId,
+          project_total: this.data.project_total
         };
-        console.log('iu', head, uDataList);
         this.modalService.openModal('addPeople', head, uDataList, 'addPeopleModal').then((result: any) => {
             if (result && !result.isCancel) {
                 this.getDetails();
@@ -515,20 +596,6 @@ export class DetailQuotePage implements OnInit {
     if (this.saveReviewForm) {
       return StaticService.formError(this.saveReviewForm.controls, fieldName, type, options).msg;
     }
-  }
-  onReplyComment(comment) {
-    _.forEach(this.data.message, msg => {
-      msg.showForm = false;
-    });
-    this.tempFileArrReply = []; this.tempFilesToUpReply = []; this.tempErrorFileSelectReply = null;
-    this.replyForm.reset();
-    try {
-      setTimeout(() => {
-        const replyElements = this.el.nativeElement.querySelectorAll('.reply_input');
-        replyElements[0].setFocus();
-      }, 100);
-    } catch (e) {}
-    comment.showForm = true;
   }
   clickonStar(i) {
     _.forEach(this.starArr, v => {

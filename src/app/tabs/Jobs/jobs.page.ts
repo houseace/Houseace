@@ -31,11 +31,7 @@ export class JobsPage implements OnInit {
     _.forEach(JOB_FILTER, (val, key) => {
       this.filterArray.push({title: key, val});
     });
-    this.activatedRoute.queryParams.subscribe(async () => {
-      let routParams: any = null;
-      try {
-        routParams = this.router.getCurrentNavigation().extras.state || null;
-      } catch (e) {}
+    this.helper.navParams().then((routParams: any) => {
       this.auth.getSavedUser().then((user) => {
         if (user) {
           this._USER = user;
@@ -44,7 +40,7 @@ export class JobsPage implements OnInit {
           this.loadingUser = false;
           if (routParams) {
             if (routParams.detailJobId) {
-              this.quoteDetail(routParams.detailJobId, routParams.selectedSegment ? routParams.selectedSegment : null);
+              this.quoteDetail(routParams.detailJobId, routParams.selectedSegment ? routParams.selectedSegment : 'Activity');
             }
             this.showMsg = !!routParams.showMsg;
           }
@@ -54,7 +50,7 @@ export class JobsPage implements OnInit {
           this.loadingUser = false;
         }
       }).catch(() => {});
-    });
+    }).catch(() => {});
   }
   ionViewWillEnter() {
     setTimeout(() => {
@@ -65,7 +61,7 @@ export class JobsPage implements OnInit {
   }
   ngOnInit() {
   }
-  quoteDetail(pId, selectedSegment = null) {
+  quoteDetail(pId, selectedSegment = 'Activity') {
     this.navCtrl.navigateForward(APP_PAGES.DETAIL_QUOTE, {
       state: {
         pId, user: this._USER, selectedSegment
@@ -110,8 +106,9 @@ export class JobsPage implements OnInit {
       let limit = VARS.LIMIT_LIST;
       let page = this.page;
       if (!isInfiniteScroll && !refresh) {
-        this.isLoading = this.progressBar = true;
+        this.isLoading = true;
         this.list = [];
+        this.progressBar = true;
         this.page = page = VARS.PAGE;
       } else if (refresh && !this.isLoading) {
         this.progressBar = true;
@@ -127,17 +124,20 @@ export class JobsPage implements OnInit {
           filter_by: this.filterByStatus,
           limit
         }).then((res: any) => {
+          /*if (!isInfiniteScroll && !refresh) {
+            this.list = [];
+          }*/
           if (ApiService._successRes(res)) {
-            if (refresh && !this.isLoading) {
-              this.list = res.data;
-            } else if (!refresh) {
-              _.forEach(res.data, (value) => {
-                this.list.push(value);
-              });
-            }
+          if (refresh && !this.isLoading) {
+            this.list = res.data;
+          } else if (!refresh) {
+            _.forEach(res.data, (value) => {
+              this.list.push(value);
+            });
           }
-          this.isLoading = this.progressBar = false;
+          }
           this.recordsFiltered = res.recordsFiltered || 0;
+          this.isLoading = this.progressBar = false;
           if (ev) {
             ev.target.complete();
           }

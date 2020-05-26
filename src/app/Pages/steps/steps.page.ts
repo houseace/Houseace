@@ -1,5 +1,4 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
 import {IonContent, NavController, Platform} from '@ionic/angular';
 import {
   ACF_FC_LAYOUT, APP_PAGES,
@@ -13,7 +12,6 @@ import {HelperService} from '../../Services/Helper/helper.service';
 import _ from 'lodash';
 import {FormGroup} from '@angular/forms';
 import {INPUT_TYPE_NAME} from '../../keyOf';
-import {AuthService} from '../../core/auth/auth.service';
 import {ApiService} from '../../Services/api/api.service';
 import {ModalService} from '../../Services/modal/modal.service';
 import {StaticService} from '../../Services/static/static.service';
@@ -29,40 +27,20 @@ export class StepsPage implements OnInit, OnDestroy {
   _USER: any; userType: any;
   data: any; pStep = 0; totalFieldCount = 0; viewInit = false;
   displayRepeater = false; displayRepeaterArr: any = [];
-  isLogin = false;
-  loginForm: FormGroup; lFormC: any;
-  registerForm: FormGroup; rFormC: any;
   sf: FormGroup; sfc: any;
   postData: any = {
-    scopeMargin: 0,
+    scopeMargin: 30,
     projectPrice: 0,
     projectId: 0,
     agentToken: 0
   };
   headerOptions: any; selectedClient: any; hardWareBackBtn: any;
-  constructor(private activatedRoute: ActivatedRoute,
-              private router: Router,
-              private navCtrl: NavController,
-              private el: ElementRef,
-              private auth: AuthService,
+  constructor(private el: ElementRef,
               private api: ApiService,
               private modalService: ModalService,
-              public helper: HelperService,
-              private platform: Platform) {
-    this.auth.authState$.subscribe(state => {
-      if (state === true) {
-        this.auth.getSavedUser().then((user) => {
-          this.setUser(user);
-        }).catch(() => {});
-      } else {
-        this._USER = this.userType = null;
-      }
-    });
+              private platform: Platform,
+              public helper: HelperService) {
     this.setValues();
-    this.loginForm =  StaticService.getLoginForm();
-    this.registerForm = StaticService.getStepRegisterForm();
-    this.lFormC = this.loginForm.controls;
-    this.rFormC = this.registerForm.controls;
   }
   setUser(cUser) {
     if (cUser) {
@@ -74,15 +52,15 @@ export class StepsPage implements OnInit, OnDestroy {
       if (StaticService.userTypeCC(this.userType)) {
         this.setFVT(this.sfc, 'projectClient', this.data.userId);
       }
-      StaticService.setFormVal(this.sfc, 'projectTimeframe', this.timeframe[0].timeframe || null);
+      StaticService.setFormVal(this.sfc, 'projectTimeframe', (this.timeframe && this.timeframe.length && this.timeframe[0].timeframe) ? this.timeframe[0].timeframe : null);
     }
   }
   setValues() {
-    this.activatedRoute.queryParams.subscribe(async () => {
-      const routParams = this.router.getCurrentNavigation().extras.state;
+    this.helper.navParams().then((routParams: any) => {
       if (routParams) {
         this.data = routParams.data;
         this.timeframe = routParams.timeframe;
+        this.postData.projectId = routParams.projectId || 0;
         this.setUser(routParams.cUser);
         this.totalFieldCount = _.toNumber(this.data.acf.quote_fields.length);
         _.forEach(this.data.acf.quote_fields, v => {
@@ -158,12 +136,11 @@ export class StepsPage implements OnInit, OnDestroy {
           progress: ((this.pStep + 1) / this.totalFieldCount)
         };
       }
-    });
+    }).catch(() => {});
   }
   vCheck(fieldName, type: INPUT_TYPE_NAME = 'OTHER', options: any = {}) {
     options.isRequired = true;
-    const cFormC = !(this._USER) ? (this.isLogin ? this.lFormC : this.rFormC) : (this.sfc);
-    if (cFormC) { return StaticService.formError(cFormC, fieldName, type, options).msg; }
+    if (this.sfc) { return StaticService.formError(this.sfc, fieldName, type, options).msg; }
   }
   setFVT(formC, key, value) {
     if (formC) {
@@ -176,8 +153,10 @@ export class StepsPage implements OnInit, OnDestroy {
         this.onStep('setRoot');
       });
       setTimeout(() => {
-        console.log('sss');
-        this.scrollArea.scrollToBottom(100);
+        try {
+          this.scrollArea.scrollToBottom(100);
+        } catch (e) {
+        }
       }, 100);
     });
   }
@@ -216,7 +195,12 @@ export class StepsPage implements OnInit, OnDestroy {
       if (!this.pStep || nav === 'setRoot') {
         this.helper.presentAlertConfirm('Are you sure you want to leave?', 'All quote data will be lost', 'Leave', 'Resume').then(isConfirm => {
           if (isConfirm) {
-            this.helper.pushRootPage(APP_PAGES.ESTIMATE, {selectedTab: 'Estimate'});
+            if (this.postData.projectId) {
+              console.log('dd');
+              this.helper.popPage();
+            } else {
+              this.helper.pushRootPage(APP_PAGES.ESTIMATE, {selectedTab: 'Estimate'});
+            }
           }
         });
       } else {
@@ -224,8 +208,14 @@ export class StepsPage implements OnInit, OnDestroy {
         this.headerOptions.progress = ((this.pStep + 1) / this.data.acf.quote_fields.length);
       }
     } else {
-      this.pStep++;
-      this.headerOptions.progress = ((this.pStep + 1) / this.data.acf.quote_fields.length);
+      // this.pStep++;
+      // this.headerOptions.progress = ((this.pStep + 1) / this.data.acf.quote_fields.length);
+      if (((this.pStep + 1) === this.totalFieldCount) && this.postData.projectId) {
+        this.saveDetails();
+      } else {
+        this.pStep++;
+        this.headerOptions.progress = ((this.pStep + 1) / this.data.acf.quote_fields.length);
+      }
     }
     this.calPrice();
   }
@@ -272,14 +262,6 @@ export class StepsPage implements OnInit, OnDestroy {
       this.displayRepeaterArr.push({ customQuoteFieldTitle: '' });
     }
   }
-  changeLoginView(view = 'Login') {
-    if (view === 'Login') {
-      this.registerForm.reset();
-    } else if (view === 'Register') {
-      this.loginForm.reset();
-    }
-    this.isLogin = !this.isLogin;
-  }
   saveDetails() {
     this.data.displayRepeaterArr = this.displayRepeaterArr;
     this.postData.projectName = this.headerOptions.projectName;
@@ -288,41 +270,41 @@ export class StepsPage implements OnInit, OnDestroy {
       this.data[key] = val;
     });
     this.data.api_key = VARS.API_KEY;
-    this.data.purpose = 'save_quote';
-    if (this._USER) {
-      const invalidElements = this.el.nativeElement.querySelectorAll('.ng-invalid');
-      StaticService.markFormGroupTouched(this.sf, invalidElements);
-      if (this.sf.valid) {
-        _.forEach(this.sf.value, (val, key) => {
-          if (key === 'date_start') {
-            val = this.helper.getCDT('YYYY/MM/DD', this.sf.value.date_start);
-          }
-          this.data[key] = val;
-        });
-        console.log('this.data', this.data);
-        this.helper.presentLoadingWithOptions('Saving data...').catch(() => {});
-        this.api.apiCall(PURPOSE.SAVE_QUOTE, this.data).then((saveRes: any) => {
-          if (ApiService._successRes(saveRes)) {
-            this.navCtrl.navigateRoot(APP_PAGES.JOBS, {state: {detailJobId: saveRes.data.projectId, selectedTab: 'Jobs' }}).catch(() => {});
-          }
-          this.helper.dismissLoading();
-        }).catch(() => {});
+    this.data.purpose = (this.postData.projectId) ? PURPOSE.ADD_NEW_SCOPE : PURPOSE.SAVE_QUOTE;
+    const invalidElements = this.el.nativeElement.querySelectorAll('.ng-invalid');
+    StaticService.markFormGroupTouched(this.sf, invalidElements);
+    if (this.sf.valid || this.postData.projectId) {
+      if (!this.postData.projectId) {
+        try {
+          _.forEach(this.sf.value, (val, key) => {
+            if (key === 'date_start') {
+              val = this.helper.getCDT('YYYY/MM/DD', this.sf.value.date_start);
+            }
+            this.data[key] = val;
+          });
+        } catch (e) {}
       }
-    } else {
-      const invalidElements = this.el.nativeElement.querySelectorAll('.ng-invalid');
-      const cForm = this.isLogin ? this.loginForm : this.registerForm;
-      const purpose = this.isLogin ? PURPOSE.APP_LOGIN : PURPOSE.APP_REGISTER;
-      StaticService.markFormGroupTouched(cForm , invalidElements);
-      if (cForm.valid) {
-        this.api.login(purpose, cForm.value, this.isLogin, true).then((status) => {
-          if (status) { this.changeLoginView(); }
-        }).catch(() => {});
-      } else {
-        StaticService.markFormGroupTouched(cForm , invalidElements);
-      }
+      console.log('this.data', this.data);
+      this.helper.presentLoadingWithOptions('Saving data...').catch(() => {});
+      this.api.apiCall(this.data.purpose, this.data).then((saveRes: any) => {
+        if (ApiService._successRes(saveRes)) {
+          if (this.postData.projectId) {
+            this.helper.popToPage(APP_PAGES.DETAIL_QUOTE, {pId: this.postData.projectId, user: this._USER, selectedSegment: 'Jobs'});
+          } else {
+            this.helper.pushRootPage(APP_PAGES.JOBS, {detailJobId: saveRes.data.projectId, selectedTab: 'Jobs' });
+          }
+        }
+        this.helper.dismissLoading();
+      }).catch(() => {});
     }
   }
   addClient() {
-    this.modalService.openModal('addNewClient', 'Create new client', {}, 'defaultModal');
+    this.modalService.openModal('addNewClient', 'Create new client', {}, 'defaultModal').then((res: any) => {
+      if (res && !res.isCancel) {
+        const c = res.responseData.data;
+        this.setFVT(this.sfc, 'projectClient', c.id);
+        this.selectedClient = c;
+      }
+    }).catch(() => {});
   }
 }

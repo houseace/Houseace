@@ -62,53 +62,88 @@
         <form [formGroup]="personalForm" (ngSubmit)="submitForm('personal')" class="ion-padding">
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">First Name</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="first_name" type="text" placeholder="First Name" ></ion-input>
+            <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="first_name" type="text" placeholder="Your first name" ></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('first_name', '_INPUT')"></app-error>
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Last Name</ion-label>
-            <ion-input class="myBorderInput" (keyup.enter)="submitForm()" formControlName="last_name" placeholder="Last Name"></ion-input>
+            <ion-input autocapitalize="sentences"   class="myBorderInput" (keyup.enter)="submitForm()" formControlName="last_name" placeholder="Your last name"></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('last_name','_INPUT')"></app-error>
-          <ion-item *ngIf="this.userType === this._UT.CONTRACTOR" class="ion-no-padding" lines="none">
-            <ion-label position="stacked">Business Name</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="business_name" type="text" placeholder="Business Name" ></ion-input>
-          </ion-item>
-          <ion-item *ngIf="this.userType === this._UT.CONTRACTOR" class="ion-no-padding" lines="none">
-            <ion-label position="stacked">License #</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="facebook_page" type="text" placeholder="License Number" ></ion-input>
-          </ion-item>
-          <ion-item *ngIf="this.userType === this._UT.CONTRACTOR" class="ion-no-padding" lines="none">
+          <ng-container *ngIf="userType === _UT.CONTRACTOR">
+            <ion-item  class="ion-no-padding" lines="none">
+              <ion-label position="stacked">Business Name</ion-label>
+              <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="business_name" type="text" placeholder="Business Name" ></ion-input>
+            </ion-item>
+            <app-error colorClass="_white" errorMsg=""></app-error>
+          </ng-container>
+          <ng-container *ngIf="userType === _UT.CONTRACTOR">
+            <ion-item class="ion-no-padding" lines="none">
+              <ion-label position="stacked">License #</ion-label>
+              <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="facebook_page" type="text" placeholder="License Number" ></ion-input>
+            </ion-item>
+            <app-error colorClass="_white" errorMsg=""></app-error>
+          </ng-container>
+          <ng-container *ngIf="userType === _UT.CONTRACTOR">
+            <ion-item class="ion-no-padding" lines="none">
+              <ion-label position="stacked">Projects Offered</ion-label>
+              <ion-select class="fullWidthSelect myBorderInput" [interfaceOptions]="{subHeader: 'Choose your projects', cssClass: 'customMultipleSelect'}" okText="Select" [disabled]="!_SERVICES_ARR?.length" (keyup.enter)="submitForm()" mode="ios" multiple="true" formControlName="hi_pages" placeholder="Choose your projects">
+                <ion-select-option *ngFor="let sr of _SERVICES_ARR" [value]="sr?.id">{{sr?.title}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <app-error colorClass="_white" [errorMsg]="vCheck('services', '_MULTIPLE_SELECT')"></app-error>
+          </ng-container>
+          <!--<ion-item *ngIf="this.userType === this._UT.CONTRACTOR" class="ion-no-padding" lines="none">
             <ion-label position="stacked">Trades</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="hi_pages" type="text" placeholder="Seperate each Trade by" ></ion-input>
-          </ion-item>
-          <ion-item *ngIf="this.userType === this._UT.CONTRACTOR" class="ion-no-padding" lines="none">
+            <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="hi_pages" type="text" placeholder="Seperate each Trade by" ></ion-input>
+          </ion-item>-->
+          <!--<ion-item *ngIf="this.userType === this._UT.CONTRACTOR" class="ion-no-padding" lines="none">
             <ion-label position="stacked">Service Seeking</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="service_seeking" type="text" placeholder="Service Seeking Link" ></ion-input>
-          </ion-item>
-          <ion-item *ngIf="this.userType === this._UT.CONTRACTOR" class="ion-no-padding" lines="none">
-            <ion-label position="stacked">ABN #</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="trade" type="text" placeholder="ABN #" ></ion-input>
-          </ion-item>
-          <ion-item *ngIf="this.userType === this._UT.CONTRACTOR" class="ion-no-padding" lines="none">
-            <ion-label position="stacked">Areas Service</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="areas_serviced" type="text" placeholder="Areas Service" ></ion-input>
-          </ion-item>
+            <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="service_seeking" type="text" placeholder="Service Seeking Link" ></ion-input>
+          </ion-item>-->
+          <ng-container *ngIf="userType === _UT.CONTRACTOR">
+            <ion-item class="ion-no-padding" lines="none">
+              <ion-label position="stacked">ABN #</ion-label>
+              <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="trade" type="text" placeholder="ABN" ></ion-input>
+            </ion-item>
+            <app-error colorClass="_white" errorMsg=""></app-error>
+          </ng-container>
+
+          <!--<ion-item *ngIf="this.userType === this._UT.CONTRACTOR" class="ion-no-padding" lines="none">
+                      <ion-label position="stacked">Areas Service</ion-label>
+                      <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="areas_serviced" type="text" placeholder="Areas Service" ></ion-input>
+                    </ion-item>-->
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Email</ion-label>
-            <ion-input class="myBorderInput" (keyup.enter)="submitForm()" formControlName="email" placeholder="Email"></ion-input>
+            <ion-input autocapitalize="sentences"   class="myBorderInput" (keyup.enter)="submitForm()" formControlName="email" placeholder="Your E-mail"></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('email','_EMAIL')"></app-error>
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Phone</ion-label>
-            <ion-input class="myBorderInput" (keyup.enter)="submitForm()" formControlName="phone" placeholder="Phone"></ion-input>
+            <ion-input autocapitalize="sentences"   class="myBorderInput" (keyup.enter)="submitForm()" formControlName="phone" placeholder="Your phone"></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('phone','_INPUT')"></app-error>
+          <ng-container *ngIf="userType === _UT.SUPPLIER">
+            <ion-item class="ion-no-padding" lines="none">
+              <ion-select class="myBorderInput" (keyup.enter)="submitForm()" formControlName="account_type" placeholder="Business Type" interface="action-sheet">
+                <ion-select-option *ngFor="let at of _AT" [value]="at">{{at}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <app-error colorClass="_white" [errorMsg]="vCheck('account_type', '_SELECT')"></app-error>
+          </ng-container>
+          <ng-container *ngIf="userType === _UT.CONTRACTOR">
+            <ion-item class="ion-no-padding" lines="none">
+              <ion-label position="stacked">Radius around which you work (in km)</ion-label>
+              <ion-input autocapitalize="sentences"   class="myBorderInput" (keyup.enter)="submitForm()" formControlName="radius" type="tel" placeholder="Your Working Radius"></ion-input>
+            </ion-item>
+            <app-error colorClass="_white" [errorMsg]="vCheck('radius', '_INPUT')"></app-error>
+          </ng-container>
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Address</ion-label>
-            <ion-input class="myBorderInput" (keyup.enter)="submitForm()" formControlName="address" placeholder="Address"></ion-input>
+            <ion-input autocapitalize="sentences"   class="myBorderInput" (keyup.enter)="submitForm()" formControlName="address" placeholder="Enter address"></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('address','_INPUT')"></app-error>
+
           <ion-item class="ion-no-padding ion-margin-bottom" lines="none">
             <ion-avatar slot="start" class="myAvatar">
               <img alt="user" [src]="helper._IMG.DEFAULT_LOADING" [errorImage]="helper._IMG.DEFAULT_USER" [lazyLoad]="tempimg" >
@@ -140,31 +175,31 @@
         <form [formGroup]="companySettingForm" (ngSubmit)="submitForm('companySetting')" class="ion-padding">
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Company Name</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="company_name" type="text" placeholder="Company Name" ></ion-input>
+            <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="company_name" type="text" placeholder="Company Name" ></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('company_name', '_INPUT')"></app-error>
-          <ion-item *ngIf="this.userType === this._UT.AGENT" class="ion-no-padding" lines="none">
+          <ion-item *ngIf="userType === _UT.AGENT" class="ion-no-padding" lines="none">
             <ion-label position="stacked">Quote Validity</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="quote_validity" type="text" placeholder="30" ></ion-input>
+            <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="quote_validity" type="text" placeholder="30" ></ion-input>
           </ion-item>
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Accounts Email</ion-label>
-            <ion-input class="myBorderInput" (keyup.enter)="submitForm()" formControlName="company_email" placeholder="Accounts Email"></ion-input>
+            <ion-input autocapitalize="sentences"   class="myBorderInput" (keyup.enter)="submitForm()" formControlName="company_email" placeholder="Accounts Email"></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('company_email','_EMAIL')"></app-error>
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Accounts Phone</ion-label>
-            <ion-input class="myBorderInput" (keyup.enter)="submitForm()" formControlName="company_phone" placeholder="Accounts Phone"></ion-input>
+            <ion-input autocapitalize="sentences"   class="myBorderInput" (keyup.enter)="submitForm()" formControlName="company_phone" placeholder="Accounts Phone"></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('company_phone','_INPUT')"></app-error>
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Company Address</ion-label>
-            <ion-input class="myBorderInput" (keyup.enter)="submitForm()" formControlName="company_address" placeholder="Company Address"></ion-input>
+            <ion-input autocapitalize="sentences"   class="myBorderInput" (keyup.enter)="submitForm()" formControlName="company_address" placeholder="Company Address"></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('company_address','_INPUT')"></app-error>
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Terms and Conditions</ion-label>
-            <ion-input class="myBorderInput" (keyup.enter)="submitForm()" formControlName="ipi" placeholder="Terms and Conditions"></ion-input>
+            <ion-input autocapitalize="sentences"   class="myBorderInput" (keyup.enter)="submitForm()" formControlName="ipi" placeholder="Terms and Conditions"></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('ipi','_INPUT')"></app-error>
           <ion-item class="ion-no-padding ion-margin-bottom" lines="none">
@@ -183,12 +218,12 @@
         <form [formGroup]="securityForm" (ngSubmit)="submitForm('security')" class="ion-padding">
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Password</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="password" type="password" placeholder="New Password" [clearOnEdit]="false"></ion-input>
+            <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="password" type="password" placeholder="New Password" [clearOnEdit]="false"></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('password', '_PASSWORD')"></app-error>
           <ion-item class="ion-no-padding" lines="none">
             <ion-label position="stacked">Password Confirm</ion-label>
-            <ion-input (keyup.enter)="submitForm()" class="myBorderInput" formControlName="passwordc" type="password" placeholder="Password Confirm" [clearOnEdit]="false"></ion-input>
+            <ion-input autocapitalize="sentences"   (keyup.enter)="submitForm()" class="myBorderInput" formControlName="passwordc" type="password" placeholder="Password Confirm" [clearOnEdit]="false"></ion-input>
           </ion-item>
           <app-error [errorMsg]="vCheck('passwordc', '_EQUAL', {passwordEqualField: 'password'})"></app-error>
           <ion-button class="ion-no-margin ion-text-capitalize" size="large" expand="block" type="submit">Save</ion-button>

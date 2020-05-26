@@ -57,7 +57,7 @@
         <ng-template #showEditableProjectName>
           <ion-item class="innerPaddingEnd itemMinH30" lines="none">
             <ion-icon slot="start" size="small" class="ion-no-margin"></ion-icon>
-            <ion-input #inputProjectName [(ngModel)]="options.projectName" class="ion-text-center projectInput"></ion-input>
+            <ion-input autocapitalize="sentences"   #inputProjectName [(ngModel)]="options.projectName" class="ion-text-center projectInput"></ion-input>
             <ion-icon slot="end" name="md-create" class="ion-no-margin" size="small" (click)="inputProjectName.setFocus()"></ion-icon>
           </ion-item>
         </ng-template>
@@ -102,7 +102,7 @@
         <ng-template #showEditableProjectName>
           <ion-item class="innerPaddingEnd itemMinH30" lines="none">
             <ion-icon slot="start" size="small" class="ion-no-margin"></ion-icon>
-            <ion-input #inputProjectName [(ngModel)]="options.projectName" class="ion-text-center projectInput"></ion-input>
+            <ion-input autocapitalize="sentences"   #inputProjectName [(ngModel)]="options.projectName" class="ion-text-center projectInput"></ion-input>
             <ion-icon slot="end" name="md-create" class="ion-no-margin" size="small" (click)="inputProjectName.setFocus()"></ion-icon>
           </ion-item>
         </ng-template>

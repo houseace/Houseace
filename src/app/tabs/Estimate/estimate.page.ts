@@ -48,9 +48,6 @@ export class EstimatePage {
        this.isLoading = false;
     }).catch(() => {});
   }
-  pushPage(p) {
-    this.helper.pushRootPage(APP_PAGES.STEPS, {data: p, cUser: this._USER, timeframe: this.timeframe});
-  }
   testCons(res) {
     // TODO remove function
     const cc = _.map(res.data, (val) => {

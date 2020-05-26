@@ -3,7 +3,7 @@ import {HelperService} from '../../Services/Helper/helper.service';
 import {ApiService} from '../../Services/api/api.service';
 import {ModalService} from '../../Services/modal/modal.service';
 import {StaticService} from '../../Services/static/static.service';
-import {PURPOSE, STORAGE_GET_DATA, SITE_URLS} from '../../app-constants.service';
+import {PURPOSE, STORAGE_GET_DATA, SITE_URLS, USER_TYPES} from '../../app-constants.service';
 import {AuthService} from '../../core/auth/auth.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UploaderService} from '../../Services/uploader/uploader.service';
@@ -15,7 +15,7 @@ import _ from 'lodash';
   styleUrls: ['./invoice-detail.page.scss'],
 })
 export class InvoiceDetailPage implements OnInit, OnDestroy {
-  user: any; _NOTIF: any = []; _MSG: any = [];
+  user: any; userType: any; _NOTIF: any = []; _MSG: any = []; _UT = USER_TYPES;
   isNotification = false; isLoading = true; progressBar = true;
   invoiceId = 0; details: any;
   msgInterval: any; notInterval: any;
@@ -31,6 +31,7 @@ export class InvoiceDetailPage implements OnInit, OnDestroy {
       if (routParams) {
         this.invoiceId = routParams.invoiceId;
         this.user = routParams.user;
+        this.userType = StaticService.getUser(this.user, STORAGE_GET_DATA.USER_ROLE);
         this.getNotification();
         this.getMessage();
       }
@@ -47,8 +48,12 @@ export class InvoiceDetailPage implements OnInit, OnDestroy {
     }, 5000);
   }
   ngOnDestroy() {
-    this.msgInterval.clearInterval();
-    this.notInterval.clearInterval();
+    try {
+      clearInterval(this.msgInterval);
+    } catch (e) {}
+    try {
+      clearInterval(this.notInterval);
+    } catch (e) {}
   }
   btn(type) {
     if (type === 'NotiBell') {
@@ -72,15 +77,20 @@ export class InvoiceDetailPage implements OnInit, OnDestroy {
     } else if (type === 'downloadPdf') {
       const myFileName = 'invoice' + this.details.invoice_info.number + '.pdf';
       this.uploader.downloadFile(SITE_URLS.BASE_URL + '/tcpdf/invoice/invoice.php?invoice_id=' + this.invoiceId, myFileName);
-      /*this.api.apiCall(PURPOSE.GET_PDF, {
-        invoice_id: this.invoiceId
-      }, true).then((res: any) => {
-        console.log('res', res)
-        if (ApiService._successRes(res)) {
-          console.log('after success');
-          this.uploader.downloadFile(SITE_URLS.BASE_URL + '/tcpdf/invoice/invoice.php?invoice_id=' + this.invoiceId);
+    } else if (type === 'removeInvoice') {
+      this.helper.presentAlertConfirm('Confirm', 'Do you really want to remove this Invoice?', 'Remove', 'No').then(async (isConfirm) => {
+        if (isConfirm) {
+          this.helper.presentLoadingWithOptions('Removing Invoice...').catch(() => {});
+          this.api.apiCall(PURPOSE.DELETE_INVOICE, {
+            invoiceId: this.invoiceId
+          }, true).then((res) => {
+            this.helper.dismissLoading();
+            if (ApiService._successRes(res)) {
+              this.helper.popPage();
+            }
+          });
         }
-      }).catch(() => {});*/
+      }).catch(() => {});
     }
   }
   getDetails() {

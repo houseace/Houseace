@@ -3,9 +3,12 @@
     <ion-buttons slot="start">
       <ion-back-button mode="md"></ion-back-button>
     </ion-buttons>
-    <ion-title class="ion-no-padding">
+    <ion-title class="ion-no-padding headTitle">
       Invoice Info
       </ion-title>
+    <ion-button size="small" slot="end" fill="clear" class="myRippleBtn" (click)="btn('removeInvoice')" *ngIf="(userType === _UT.HEAD_CONTRACTOR || userType === _UT.AGENT)">
+      <ion-icon name="md-trash"></ion-icon>
+    </ion-button>
     <ion-button size="small" slot="end" fill="clear" class="myRippleBtn btnWithDot" (click)="btn('Message')">
       <ion-icon name="mail"></ion-icon>
       <ion-text *ngIf="_MSG?.length" color="success">•</ion-text>

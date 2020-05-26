@@ -178,7 +178,7 @@ export class AuthService {
       await this.storage.clear();
       this.event.publish('USER_UPDATED_LOGOUT');
       this.checkIfLoggedIn(true);
-      if (showToast) { this.helper.presentNewToast(msg ? msg : VALIDATION_MSG.ERR_LOGOUT, '1000').catch(() => {}); }
+      if (showToast) { this.helper.presentNewToast(msg ? msg : VALIDATION_MSG.ERR_LOGOUT, '1000', 'bottom').catch(() => {}); }
       this.helper.closeAllPopups().catch(() => {});
       this.oneSignal.sendTags({ user_id: 0 });
       this.oneSignal.setSubscription(false);

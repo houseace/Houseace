@@ -40,6 +40,7 @@ export class ScheduleComponent implements OnInit {
   }
   getSeccion(storageData: any[], flag: any = 0): FormArray {
     if (flag === 0) {
+      console.log('storageData', storageData);
       const arr: any = [];
       _.forEach(storageData, (val, key) => {
         arr.push(this._FB.group({

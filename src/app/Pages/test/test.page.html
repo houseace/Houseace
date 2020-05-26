@@ -9,14 +9,14 @@
 
 <ion-content>
   <form [formGroup]="sf">
-  <ion-input
+  <ion-input autocapitalize="sentences"
       formControlName="this_input"
       mask="0*.00"
       [dropSpecialCharacters]="false"
       type="text"
   ></ion-input>
   </form>
-  <ion-input
+  <ion-input autocapitalize="sentences"
       formControlName="" value=""
       mask="0*.00"
       [dropSpecialCharacters]="false"

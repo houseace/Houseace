@@ -51,13 +51,17 @@
           <ion-grid class="moodsGrid">
             <ng-container *ngFor="let f of oBj(true, 'mood_fields') let mi = index">
               <ion-row *ngIf="mi % 2 === 0">
-                <ion-col size="6" *ngIf="mi < oBj(true, 'mood_fields').length" (click)="itemSelect(mi, 'toggle','mood_fields')">
-                  <img alt="img" [lazyLoad]="oBj(true, 'mood_fields')[mi].image" [src]="helper._IMG.DEFAULT_NO_IMG" [errorImage]="helper._IMG.DEFAULT_NO_IMG" />
-                  <div class="overlay" *ngIf="oBj(true, 'mood_fields')[mi].isSelected"><img [src]="helper._IMG.CHECK_CIRCLE" alt="icon" class="overlayCenter"></div>
+                <ion-col size="6" *ngIf="mi < oBj(true, 'mood_fields').length">
+                  <div class="relativePosition" (click)="itemSelect(mi, 'toggle','mood_fields')">
+                    <img alt="img" [lazyLoad]="oBj(true, 'mood_fields')[mi].image" [src]="helper._IMG.DEFAULT_NO_IMG" [errorImage]="helper._IMG.DEFAULT_NO_IMG" />
+                    <div class="overlay" *ngIf="oBj(true, 'mood_fields')[mi].isSelected"><img [src]="helper._IMG.CHECK_CIRCLE" alt="icon" class="overlayCenter"></div>
+                  </div>
                 </ion-col>
-                <ion-col size="6" *ngIf="(mi+1) < oBj(true, 'mood_fields').length" (click)="itemSelect((mi+1), 'toggle', 'mood_fields')">
-                  <img alt="img" [lazyLoad]="oBj(true, 'mood_fields')[mi+1].image" [src]="helper._IMG.DEFAULT_NO_IMG" [errorImage]="helper._IMG.DEFAULT_NO_IMG" />
+                <ion-col size="6" *ngIf="(mi+1) < oBj(true, 'mood_fields').length">
+                  <div class="relativePosition" (click)="itemSelect((mi+1), 'toggle','mood_fields')">
+                    <img alt="img" [lazyLoad]="oBj(true, 'mood_fields')[mi+1].image" [src]="helper._IMG.DEFAULT_NO_IMG" [errorImage]="helper._IMG.DEFAULT_NO_IMG" />
                   <div class="overlay" *ngIf="oBj(true, 'mood_fields')[mi+1].isSelected"><img [src]="helper._IMG.CHECK_CIRCLE" alt="icon" class="overlayCenter"></div>
+                  </div>
                 </ion-col>
               </ion-row>
             </ng-container>
@@ -65,21 +69,21 @@
         </ng-template>
         <ng-template [ngSwitchCase]="AFL.ADDITIONAL_NOTES">
           <div class="ion-padding-horizontal">
-            <ion-textarea rows="6" class="myBorderInput" [(ngModel)]="oBj(false).newAdditionalNotes"></ion-textarea>
+            <ion-textarea autocapitalize="sentences" rows="6" class="myBorderInput" [(ngModel)]="oBj(false).newAdditionalNotes"></ion-textarea>
           </div>
         </ng-template>
         <ng-template [ngSwitchCase]="AFL.WIDTH_AND_HEIGHT">
           <ion-list class="ion-padding-horizontal">
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Length (m)</ion-label>
-              <ion-input type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).wh_width" (ionChange)="calPrice()" placeholder="Width">
+              <ion-input autocapitalize="sentences"   type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).wh_width" (ionChange)="calPrice()" placeholder="Width">
                 <ion-icon name="md-remove" class="incrementer-icon incrementer-icon-left" (click)="(oBj(false).wh_width = _.round((_.toNumber(oBj(false).wh_width) - 1)))"></ion-icon>
                 <ion-icon name="md-add" class="incrementer-icon incrementer-icon-right" (click)="(oBj(false).wh_width = _.round((_.toNumber(oBj(false).wh_width) + 1)))"></ion-icon>
               </ion-input>
             </ion-item>
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Height (m)</ion-label>
-              <ion-input type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).wh_height" (ionChange)="calPrice()" placeholder="Height">
+              <ion-input autocapitalize="sentences"   type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).wh_height" (ionChange)="calPrice()" placeholder="Height">
                 <ion-icon name="md-remove" class="incrementer-icon incrementer-icon-left" (click)="(oBj(false).wh_height = _.round((_.toNumber(oBj(false).wh_height) - 1)))"></ion-icon>
                 <ion-icon name="md-add" class="incrementer-icon incrementer-icon-right" (click)="(oBj(false).wh_height = _.round((_.toNumber(oBj(false).wh_height) + 1)))"></ion-icon>
               </ion-input>
@@ -90,14 +94,14 @@
           <ion-list class="ion-padding-horizontal">
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Width (m)</ion-label>
-              <ion-input type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).wl_width" (ionChange)="calPrice()" placeholder="Width">
+              <ion-input autocapitalize="sentences"   type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).wl_width" (ionChange)="calPrice()" placeholder="Width">
                 <ion-icon name="md-remove" class="incrementer-icon incrementer-icon-left" (click)="(oBj(false).wl_width = _.round((_.toNumber(oBj(false).wl_width) - 1)))"></ion-icon>
                 <ion-icon name="md-add" class="incrementer-icon incrementer-icon-right" (click)="(oBj(false).wl_width = _.round((_.toNumber(oBj(false).wl_width) + 1)))"></ion-icon>
               </ion-input>
             </ion-item>
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Length (m)</ion-label>
-              <ion-input type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).wl_length" (ionChange)="calPrice()" placeholder="Length">
+              <ion-input autocapitalize="sentences"   type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).wl_length" (ionChange)="calPrice()" placeholder="Length">
                 <ion-icon name="md-remove" class="incrementer-icon incrementer-icon-left" (click)="(oBj(false).wl_length = _.round((_.toNumber(oBj(false).wl_length) - 1)))"></ion-icon>
                 <ion-icon name="md-add" class="incrementer-icon incrementer-icon-right" (click)="(oBj(false).wl_length = _.round((_.toNumber(oBj(false).wl_length) + 1)))"></ion-icon>
               </ion-input>
@@ -108,11 +112,11 @@
           <ion-list class="ion-padding-horizontal">
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Price (per m2)</ion-label>
-              <ion-input type="number" class="myBorderInput" [(ngModel)]="oBj(false).pa_price" (ionChange)="calPrice()" placeholder="Price"></ion-input>
+              <ion-input autocapitalize="sentences"   type="number" class="myBorderInput" [(ngModel)]="oBj(false).pa_price" (ionChange)="calPrice()" placeholder="Price"></ion-input>
             </ion-item>
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Area (m2)</ion-label>
-              <ion-input type="number" class="myBorderInput" [(ngModel)]="oBj(false).pa_area" (ionChange)="calPrice()" placeholder="Area"></ion-input>
+              <ion-input autocapitalize="sentences"   type="number" class="myBorderInput" [(ngModel)]="oBj(false).pa_area" (ionChange)="calPrice()" placeholder="Area"></ion-input>
             </ion-item>
           </ion-list>
         </ng-template>
@@ -120,7 +124,7 @@
           <ion-list class="ion-padding-horizontal">
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Length (m)</ion-label>
-              <ion-input type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).l_length" (ionChange)="calPrice()" placeholder="Price">
+              <ion-input autocapitalize="sentences"   type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).l_length" (ionChange)="calPrice()" placeholder="Price">
                 <ion-icon name="md-remove" class="incrementer-icon incrementer-icon-left" (click)="(oBj(false).l_length = _.round((_.toNumber(oBj(false).l_length) - 1)))"></ion-icon>
                 <ion-icon name="md-add" class="incrementer-icon incrementer-icon-right" (click)="(oBj(false).l_length = _.round((_.toNumber(oBj(false).l_length) + 1)))"></ion-icon>
               </ion-input>
@@ -131,7 +135,7 @@
           <ion-list class="ion-padding-horizontal">
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Area (m2)</ion-label>
-              <ion-input type="number" class="myBorderInput" [(ngModel)]="oBj(false).a_area" (ionChange)="calPrice()" placeholder="Price">
+              <ion-input autocapitalize="sentences"   type="number" class="myBorderInput" [(ngModel)]="oBj(false).a_area" (ionChange)="calPrice()" placeholder="Price">
                 <ion-icon name="md-remove" class="incrementer-icon incrementer-icon-left" (click)="(oBj(false).a_area = _.round((_.toNumber(oBj(false).a_area) - 1)))"></ion-icon>
                 <ion-icon name="md-add" class="incrementer-icon incrementer-icon-right" (click)="(oBj(false).a_area = _.round((_.toNumber(oBj(false).a_area) + 1)))"></ion-icon>
               </ion-input>
@@ -142,7 +146,7 @@
           <ion-list class="ion-padding-horizontal">
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Height (m)</ion-label>
-              <ion-input type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).h_height" (ionChange)="calPrice()" placeholder="Price">
+              <ion-input autocapitalize="sentences"   type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).h_height" (ionChange)="calPrice()" placeholder="Price">
                 <ion-icon name="md-remove" class="incrementer-icon incrementer-icon-left" (click)="(oBj(false).h_height = _.round((_.toNumber(oBj(false).h_height) - 1)))"></ion-icon>
                 <ion-icon name="md-add" class="incrementer-icon incrementer-icon-right" (click)="(oBj(false).h_height = _.round((_.toNumber(oBj(false).h_height) + 1)))"></ion-icon>
               </ion-input>
@@ -153,21 +157,21 @@
           <ion-list class="ion-padding-horizontal">
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Width (m)</ion-label>
-              <ion-input required type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).rs_width" (ionChange)="calPrice()" placeholder="Width" min="0">
+              <ion-input autocapitalize="sentences"   required type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).rs_width" (ionChange)="calPrice()" placeholder="Width" min="0">
                 <ion-icon name="md-remove" class="incrementer-icon incrementer-icon-left" (click)="(oBj(false).rs_width = _.round((_.toNumber(oBj(false).rs_width) - 0.1), 1))"></ion-icon>
                 <ion-icon name="md-add" class="incrementer-icon incrementer-icon-right" (click)="(oBj(false).rs_width = _.round((_.toNumber(oBj(false).rs_width) + 0.1), 1))"></ion-icon>
               </ion-input>
             </ion-item>
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Length (m)</ion-label>
-              <ion-input required type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).rs_length" (ionChange)="calPrice()" placeholder="Length" min="0">
+              <ion-input autocapitalize="sentences"   required type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).rs_length" (ionChange)="calPrice()" placeholder="Length" min="0">
                 <ion-icon name="md-remove" class="incrementer-icon incrementer-icon-left" (click)="(oBj(false).rs_length = _.round((_.toNumber(oBj(false).rs_length) - 0.1), 1))"></ion-icon>
                 <ion-icon name="md-add" class="incrementer-icon incrementer-icon-right" (click)="(oBj(false).rs_length = _.round((_.toNumber(oBj(false).rs_length) + 0.1), 1))"></ion-icon>
               </ion-input>
             </ion-item>
             <ion-item class="ion-no-padding" lines="none">
               <ion-label position="stacked" class="ion-no-margin _black">Ceiling Height (m)</ion-label>
-              <ion-input required type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).rs_height" (ionChange)="calPrice()" placeholder="Height" min="0">
+              <ion-input autocapitalize="sentences"   required type="number" class="myBorderInput incrementer-input" [(ngModel)]="oBj(false).rs_height" (ionChange)="calPrice()" placeholder="Height" min="0">
                 <ion-icon name="md-remove" class="incrementer-icon incrementer-icon-left" (click)="(oBj(false).rs_height = _.round((_.toNumber(oBj(false).rs_height) - 0.1), 1))"></ion-icon>
                 <ion-icon name="md-add" class="incrementer-icon incrementer-icon-right" (click)="(oBj(false).rs_height = _.round((_.toNumber(oBj(false).rs_height) + 0.1), 1))"></ion-icon>
               </ion-input>
@@ -199,15 +203,15 @@
               <ion-card-content *ngIf="dr.isOpen" class="ion-padding-horizontal ion-padding-bottom">
                 <ion-item class="ion-no-padding" lines="none">
                   <ion-label position="stacked" class="ion-no-margin _black">Title</ion-label>
-                  <ion-input type="text" class="myBorderInput" [(ngModel)]="dr.customQuoteFieldTitle" placeholder="Title"></ion-input>
+                  <ion-input autocapitalize="sentences"   type="text" class="myBorderInput" [(ngModel)]="dr.customQuoteFieldTitle" placeholder="Title"></ion-input>
                 </ion-item>
                 <ion-item class="ion-no-padding" lines="none">
                   <ion-label position="stacked" class="ion-no-margin _black">Price - inc tax</ion-label>
-                  <ion-input type="number" min="0" class="myBorderInput" [(ngModel)]="dr.customQuoteFieldPrice" (ionChange)="calPrice()" placeholder="0.00"></ion-input>
+                  <ion-input autocapitalize="sentences"   type="number" min="0" class="myBorderInput" [(ngModel)]="dr.customQuoteFieldPrice" (ionChange)="calPrice()" placeholder="0.00"></ion-input>
                 </ion-item>
                 <ion-item class="ion-no-padding" lines="none">
                   <ion-label position="stacked" class="ion-no-margin _black">Description</ion-label>
-                  <ion-textarea rows="3" class="myBorderInput" [(ngModel)]="dr.customQuoteFieldDescription" placeholder="Description"></ion-textarea>
+                  <ion-textarea autocapitalize="sentences" rows="3" class="myBorderInput" [(ngModel)]="dr.customQuoteFieldDescription" placeholder="Description"></ion-textarea>
                 </ion-item>
               </ion-card-content>
             </ion-card>
@@ -219,99 +223,41 @@
       <div class="ion-padding">
         <h5 class="ion-no-margin">Instant Price</h5>
         <p class="ion-no-margin smallText">Houseace will work its magic and generate a detailed estimate on the spot.</p>
-        <ng-container *ngIf="!_USER">
-          <form [formGroup]="registerForm" (ngSubmit)="saveDetails()" *ngIf="!isLogin">
-            <ion-input type="hidden" formControlName="user_type"></ion-input><ion-list>
+        <form [formGroup]="sf" (ngSubmit)="saveDetails()">
+          <ion-list>
+            <ng-container *ngIf="userType !== _UT.CONTRACTOR">
               <ion-item class="ion-no-padding" lines="none">
-                <ion-input class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="registerFirstName" placeholder="First Name"></ion-input>
+                <ion-label position="stacked" class="ion-no-margin _black">What stage are you at?</ion-label>
+                <ion-select class="myBorderInput" interface="action-sheet" formControlName="projectTimeframe" placeholder="--Select Stage--">
+                  <ion-select-option *ngFor="let ts of timeframe" [value]="ts.timeframe">{{ts.timeframe}}</ion-select-option>
+                </ion-select>
+                <app-error [errorMsg]="vCheck('projectTimeframe', '_SELECT')"></app-error>
               </ion-item>
-              <app-error [errorMsg]="vCheck('registerFirstName','_INPUT')"></app-error>
               <ion-item class="ion-no-padding" lines="none">
-                <ion-input class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="registerLastName" placeholder="Last Name"></ion-input>
+                <ion-label position="stacked" class="ion-no-margin _black">
+                  {{(userType === _UT.CONTRACTOR) ? 'When do want to start?' : 'When do you need it done?'}}</ion-label>
+                <ion-datetime class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="date_start" displayFormat="DD/MM/YYYY" placeholder="DD/MM/YYYY" [min]="helper.getCDT('YYYY-MM-DD')" [max]="helper.getCDT('YYYY-MM-DD', helper._MOMENT().add('20', 'year'))"></ion-datetime>
               </ion-item>
-              <app-error [errorMsg]="vCheck('registerLastName','_INPUT')"></app-error>
-              <ion-item class="ion-no-padding" lines="none">
-                <ion-input class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="registerAddress" placeholder="Address"></ion-input>
+              <app-error [errorMsg]="vCheck('date_start', '_SELECT')"></app-error>
+            </ng-container>
+            <ion-input autocapitalize="sentences"   #pC type="hidden" formControlName="projectClient"></ion-input>
+            <ng-container *ngIf="userType !== _UT.CLIENT && userType !== _UT.CONTRACTOR">
+              <app-select label="Select client" placeholder="Select your client" sType="_HEAD_CLIENT" [mySelectedVal]="pC.value" [touchFormKey]="sfc.projectClient" [myValue]="selectedClient ? (selectedClient?.first_name+' '+selectedClient?.last_name+' ('+selectedClient?.email+')'):null" (onChangeTrig)="selectedClient=$event; setFVT(sfc, 'projectClient', $event.id)"></app-select>
+              <app-error [errorMsg]="vCheck('projectClient', '_SELECT')"></app-error>
+              <ion-item class="ion-no-padding itemMinH25" lines="none"> <!-- *ngIf="(userType !== _UT.CONTRACTOR)"-->
+                <ion-button (click)="addClient()" class="ion-no-margin ion-text-capitalize noPaddingEnd" fill="clear" slot="end">
+                  <ion-icon name="add-circle"></ion-icon>
+                  {{(userType === _UT.HEAD_CONTRACTOR) ? 'Add New User' : 'Add New Client'}}
+                </ion-button>
               </ion-item>
-              <app-error [errorMsg]="vCheck('registerAddress','_INPUT')"></app-error>
-              <ion-item class="ion-no-padding" lines="none">
-                <ion-input class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="registerPhone" placeholder="Phone"></ion-input>
-              </ion-item>
-              <app-error [errorMsg]="vCheck('registerPhone','_INPUT')"></app-error>
-              <ion-item class="ion-no-padding" lines="none">
-                <ion-input class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="registerEmail" placeholder="Email"></ion-input>
-              </ion-item>
-              <app-error [errorMsg]="vCheck('registerEmail','_EMAIL')"></app-error>
-              <ion-item class="ion-no-padding" lines="none">
-                <ion-input class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="registerPassword" placeholder="Choose Password" type="password" [clearInput]="false"></ion-input>
-              </ion-item>
-              <app-error [errorMsg]="vCheck('registerPassword','_PASSWORD')"></app-error>
-              <ion-item class="ion-no-padding" lines="none">
-                <ion-input class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="registerPasswordCheck" placeholder="Re-type Password" type="password"></ion-input>
-              </ion-item>
-              <app-error [errorMsg]="vCheck('registerPasswordCheck','_PASSWORD')"></app-error>
-            </ion-list>
-            <ion-button class="ion-no-margin ion-text-capitalize" size="large" expand="block" type="submit">See Estimate</ion-button>
-          </form>
-          <form [formGroup]="loginForm" (ngSubmit)="saveDetails()" *ngIf="isLogin">
-            <ion-list>
-              <ion-item class="ion-no-padding" lines="none">
-                <ion-input class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="user_login" placeholder="Email"></ion-input>
-              </ion-item>
-              <app-error [errorMsg]="vCheck('user_login','_INPUT')"></app-error>
-              <ion-item class="ion-no-padding" lines="none">
-                <ion-input class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="user_password" placeholder="Password" type="password" [clearOnEdit]="false"></ion-input>
-              </ion-item>
-              <app-error [errorMsg]="vCheck('user_password','_PASSWORD')"></app-error>
-            </ion-list>
-            <ion-button class="ion-no-margin ion-text-capitalize" size="large" expand="block" type="submit">Finish</ion-button>
-          </form>
-        </ng-container>
-        <ng-container *ngIf="_USER">
-          <form [formGroup]="sf" (ngSubmit)="saveDetails()">
-            <ion-list>
-              <ng-container *ngIf="userType !== _UT.CONTRACTOR">
-                <ion-item class="ion-no-padding" lines="none">
-                  <ion-label position="stacked" class="ion-no-margin _black">What stage are you at?</ion-label>
-                  <ion-select class="myBorderInput" interface="action-sheet" formControlName="projectTimeframe" placeholder="--Select Stage--">
-                    <ion-select-option *ngFor="let ts of timeframe" [value]="ts.timeframe">{{ts.timeframe}}</ion-select-option>
-                  </ion-select>
-                  <app-error [errorMsg]="vCheck('projectTimeframe', '_SELECT')"></app-error>
-                </ion-item>
-                <ion-item class="ion-no-padding" lines="none">
-                  <ion-label position="stacked" class="ion-no-margin _black">
-                    {{(userType === _UT.CONTRACTOR) ? 'When do want to start?' : 'When do you need it done?'}}</ion-label>
-                  <ion-datetime class="myBorderInput" (keyup.enter)="saveDetails()" formControlName="date_start" displayFormat="DD/MM/YYYY" placeholder="DD/MM/YYYY" [min]="helper.getCDT('YYYY-MM-DD')" [max]="helper.getCDT('YYYY-MM-DD', helper._MOMENT().add('20', 'year'))"></ion-datetime>
-                </ion-item>
-                <app-error [errorMsg]="vCheck('date_start', '_SELECT')"></app-error>
-              </ng-container>
-              <ion-input #pC type="hidden" formControlName="projectClient"></ion-input>
-              <ng-container *ngIf="userType !== _UT.CLIENT && userType !== _UT.CONTRACTOR">
-                <app-select label="Select client" placeholder="Select your client" sType="_HEAD_CLIENT" [mySelectedVal]="pC.value" [touchFormKey]="sfc.projectClient" [myValue]="selectedClient ? (selectedClient?.first_name+' '+selectedClient?.last_name+' ('+selectedClient?.email+')'):null" (onChangeTrig)="selectedClient=$event; setFVT(sfc, 'projectClient', $event.id)"></app-select>
-                <app-error [errorMsg]="vCheck('projectClient', '_SELECT')"></app-error>
-                <ion-item class="ion-no-padding itemMinH25" lines="none"> <!-- *ngIf="(userType !== _UT.CONTRACTOR)"-->
-                  <ion-button (click)="addClient()" class="ion-no-margin ion-text-capitalize noPaddingEnd" fill="clear" slot="end">
-                    <ion-icon name="add-circle"></ion-icon>
-                    {{(userType === _UT.HEAD_CONTRACTOR) ? 'Add New User' : 'Add New Client'}}
-                  </ion-button>
-                </ion-item>
-                <br>
-              </ng-container>
-              <ion-button class="ion-no-margin ion-text-capitalize centerMargin" type="submit">Instant Estimate</ion-button>
-            </ion-list>
-          </form>
-        </ng-container>
+              <br>
+            </ng-container>
+            <ion-button class="ion-no-margin ion-text-capitalize centerMargin" type="submit">Instant Estimate</ion-button>
+          </ion-list>
+        </form>
         <p class="ion-text-center smallText">
           By submitting, I agree to the Houseace <a [href]="SI.BASE_URL+SI.TERMS">Terms of Use</a> and <a [href]="SI.BASE_URL+SI.PRIVACY">Privacy Policy</a>
         </p>
-        <ng-container *ngIf="!_USER">
-          <ion-button fill="clear" class="ion-no-margin ion-text-capitalize centerMargin _black" (click)="changeLoginView('Register')" *ngIf="isLogin">
-            <ion-icon name="ios-arrow-round-forward" slot="start"></ion-icon> No&nbsp;<span class="ion-text-lowercase">account?</span>&nbsp;<span class="_primary">Sign up</span>
-          </ion-button>
-          <ion-button fill="clear" class="ion-no-margin ion-text-capitalize centerMargin _black" (click)="changeLoginView('Login')" *ngIf="!isLogin">
-            <ion-icon name="ios-arrow-round-forward" slot="start"></ion-icon> Already&nbsp;<span class="ion-text-lowercase">have an&nbsp;<span class="_primary">account?</span></span>
-          </ion-button>
-        </ng-container>
       </div>
     </ng-template>
   </ion-content>
@@ -320,7 +266,9 @@
       <ion-title class="ion-no-padding">
         <ion-item lines="none" class="innerPaddingEnd">
           <ion-label position="stacked" color="">Payment</ion-label>
-          <ion-input class="myWhiteInput" type="number" [(ngModel)]="postData.scopeMargin" (ionChange)="calPrice()"></ion-input>
+          <ion-input autocapitalize="sentences" class="myWhiteInput scopeMarginInput" type="tel" [(ngModel)]="postData.scopeMargin" (ionChange)="calPrice()">
+            <ion-text class="percentage-icon-right">%</ion-text>
+          </ion-input>
         </ion-item>
       </ion-title>
     </ion-toolbar>
@@ -328,7 +276,7 @@
       <ion-button slot="start" fill="clear" class="ion-text-capitalize ion-no-margin _white" (click)="onStep('back')">
         <ion-icon name="ios-arrow-back" slot="start" class="ion-no-margin"></ion-icon>{{pStep?'Back': 'Restart'}}
       </ion-button>
-      <ion-title *ngIf="_USER">
+      <ion-title>
         {{postData.projectPrice | currency:'USD':'symbol':'1.2-2'}}
       </ion-title>
       <ion-button slot="end" fill="clear" class="ion-text-capitalize ion-no-margin _white" (click)="onStep()">
@@ -336,40 +284,4 @@
       </ion-button>
     </ion-toolbar>
   </ion-footer>
-  <!--<ion-footer>
-    <ng-container *ngIf="(pStep === totalFieldCount); then showFinishFoot; else showNotFinishFoot"></ng-container>
-    <ng-template #showNotFinishFoot>
-      <ion-toolbar class="paymentToolbar" *ngIf="_USER && (userType === _UT.HEAD_CONTRACTOR || userType === _UT.AGENT)">
-        <ion-title class="ion-no-padding">
-        <ion-item lines="none" class="innerPaddingEnd">
-          <ion-label position="stacked" color="">Payment</ion-label>
-          <ion-input class="myWhiteInput" type="number" [(ngModel)]="postData.scopeMargin"></ion-input>
-        </ion-item>
-        </ion-title>
-      </ion-toolbar>
-      <ion-toolbar class="ion-no-padding stepsToolbar" mode="ios">
-        <ion-button slot="start" fill="clear" class="ion-text-capitalize ion-no-margin _white" (click)="onStep('back')">
-          <ion-icon name="ios-arrow-back" slot="start" class="ion-no-margin"></ion-icon>{{pStep?'Back': 'Restart'}}
-        </ion-button>
-        <ion-title *ngIf="_USER">
-          {{postData.projectPrice | currency:'USD':'symbol':'1.2-2'}}
-        </ion-title>
-        <ion-button slot="end" fill="clear" class="ion-text-capitalize ion-no-margin _white" (click)="onStep()">
-          <ion-icon name="ios-arrow-forward" slot="end" class="ion-no-margin"></ion-icon>{{((pStep+1) === totalFieldCount)?'Finish': 'Next'}}
-        </ion-button>
-      </ion-toolbar>
-    </ng-template>
-    <ng-template #showFinishFoot>
-      <ion-progress-bar mode="ios"></ion-progress-bar>
-      <ion-toolbar>
-        <div class="centerMargin">
-          <ion-button disabled fill="clear" class="ion-no-margin ion-text-capitalize ion-float-left fullOpacity _black">
-            Any Question?
-          </ion-button>
-          <ion-button fill="clear" class="ion-no-margin ion-float-left _black" [href]="helper._VAR.QUOTES_TEL"><ion-icon name="ios-call"></ion-icon></ion-button>
-          <ion-button fill="clear" class="ion-no-margin _black" [href]="helper._VAR.QUOTES_MAIL"><ion-icon name="ios-mail"></ion-icon></ion-button>
-        </div>
-      </ion-toolbar>
-    </ng-template>
-  </ion-footer>-->
 </ng-container>

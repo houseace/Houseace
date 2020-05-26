@@ -20,6 +20,7 @@ import {ImageViewerComponent} from './image-viewer/image-viewer.component';
 import {ScheduleComponent} from './schedule/schedule.component';
 import {VariationsComponent} from './variations/variations.component';
 import {BellComponent} from './bell/bell.component';
+import {QuotesComponent} from './quotes/quotes.component';
 
 @NgModule({
   imports: [
@@ -43,7 +44,8 @@ import {BellComponent} from './bell/bell.component';
     ImageViewerComponent,
     ScheduleComponent,
     VariationsComponent,
-    BellComponent
+    BellComponent,
+    QuotesComponent
   ],
   exports: [
     ErrorComponent,
@@ -60,7 +62,8 @@ import {BellComponent} from './bell/bell.component';
     ImageViewerComponent,
     ScheduleComponent,
     VariationsComponent,
-    BellComponent
+    BellComponent,
+    QuotesComponent
   ],
   entryComponents: [PopoverComponent],
 })

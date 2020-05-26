@@ -34,10 +34,10 @@ export class ViewProfilePage implements OnInit {
   }
   ionViewDidLeave() {
     /*try {
-      this.msgInterval.clearInterval();
+      clearInterval(this.msgInterval);
     } catch (e) {}
     try {
-      this.notInterval.clearInterval();
+      clearInterval(this.notInterval);
     } catch (e) {}*/
   }
   ionViewWillEnter() {

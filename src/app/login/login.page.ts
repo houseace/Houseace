@@ -1,9 +1,10 @@
 import {Component, ElementRef, OnInit} from '@angular/core';
-import {IMGS, PURPOSE, USER_TYPES_REG} from '../app-constants.service';
+import {IMGS, PURPOSE, SITE_URLS, USER_ACCOUNT_TYPE_REG, USER_TYPES_REG, USER_TYPES_REG_TITLE} from '../app-constants.service';
 import _ from 'lodash';
 import {ApiService} from '../Services/api/api.service';
 import {StaticService} from '../Services/static/static.service';
 import {INPUT_TYPE_NAME} from '../keyOf';
+import {Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -11,9 +12,10 @@ import {INPUT_TYPE_NAME} from '../keyOf';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  img = IMGS;
+  img = IMGS; _UTT = USER_TYPES_REG_TITLE; SI = SITE_URLS;
   _UT: any = _.toArray(USER_TYPES_REG);
-  loginView: any;
+  _AT: any = _.toArray(USER_ACCOUNT_TYPE_REG);
+  loginView: any; _SERVICES_ARR: any = [];
   loginForm = StaticService.getLoginForm(); lFormC: any;
   registerForm = StaticService.getRegisterForm(true); rFormC: any;
   forgotPassForm = StaticService.getForgotPassForm(); fFormC: any;
@@ -22,6 +24,7 @@ export class LoginPage implements OnInit {
     this.lFormC = this.loginForm.controls;
     this.rFormC = this.registerForm.controls;
     this.fFormC = this.forgotPassForm.controls;
+    this.getServiceList();
   }
   ngOnInit() {
   }
@@ -43,7 +46,7 @@ export class LoginPage implements OnInit {
       this.loginView = 'LOGIN';
       this.registerForm.reset();
       this.forgotPassForm.reset();
-      this.rFormC.user_type.setValue(USER_TYPES_REG.CONTRACTOR);
+      this.rFormC.user_type.setValue(USER_TYPES_REG.HOMEOWNERS);
     }
   }
   submitForm() {
@@ -58,5 +61,15 @@ export class LoginPage implements OnInit {
     } else {
       StaticService.markFormGroupTouched(cForm , invalidElements);
     }
+  }
+  onChangeRole(formC, uType) {
+    StaticService.onChangeUserRole(formC, uType);
+  }
+  getServiceList() {
+    this.api.apiCall(PURPOSE.GET_SERVICES, {}, false, false).then((res: any) => {
+      if (ApiService._successRes(res)) {
+        this._SERVICES_ARR = res.data;
+      }
+    }).catch(() => {});
   }
 }

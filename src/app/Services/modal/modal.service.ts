@@ -25,6 +25,7 @@ export class ModalService {
         component: page,
         cssClass: myCssClass + cssClass,
         mode: 'ios',
+        backdropDismiss: false,
         componentProps: {
           headerTitle,
           mType,

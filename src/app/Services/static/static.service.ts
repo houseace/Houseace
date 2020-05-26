@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {INPUT_TYPE_NAME} from '../../keyOf';
-import {STORAGE_GET_DATA, USER_TYPES, USER_TYPES_REG, VALIDATION_MSG, VARS} from '../../app-constants.service';
+import {STORAGE_GET_DATA, USER_ACCOUNT_TYPE_REG, USER_TYPES, USER_TYPES_REG, VALIDATION_MSG, VARS} from '../../app-constants.service';
 import {AbstractControl, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import _ from 'lodash';
 import * as moment from 'moment';
@@ -57,6 +57,12 @@ export class StaticService {
         }
         case '_SELECT': {
           if (formControl[fieldName].hasError('required')) {
+            validationResponse.msg = VALIDATION_MSG.ERR_REQUIRED_SELECT;
+          }
+          break;
+        }
+        case '_MULTIPLE_SELECT': {
+          if (formControl[fieldName].hasError('required') || !formControl[fieldName].value || !formControl[fieldName].value.length) {
             validationResponse.msg = VALIDATION_MSG.ERR_REQUIRED_SELECT;
           }
           break;
@@ -124,6 +130,12 @@ export class StaticService {
           }
           break;
         }
+        case '_CHECK_BOX': {
+          if (formControl[fieldName].hasError('required') || !formControl[fieldName].value) {
+            validationResponse.msg = VALIDATION_MSG.ERR_TERM_AND_PRIVACY;
+          }
+          break;
+        }
         case 'OTHER': {
           break;
         }
@@ -144,6 +156,13 @@ export class StaticService {
       } catch (e) {}
     }
   }
+  static markFormGroupUnTouched(formC) {
+    _.forEach(formC, val => {
+      try {
+        val.markAsUntouched();
+      } catch (e) {}
+    });
+  }
   static myCustomValidator(fieldNameOrVal, valType = 'equalTo'): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} => {
       const input = control.value;
@@ -163,12 +182,16 @@ export class StaticService {
   }
   static getRegisterForm(ut = true) {
     return new FormGroup({
-      user_type       : new FormControl(ut ? USER_TYPES_REG.CONTRACTOR : '', [Validators.required]),
+      user_type       : new FormControl(ut ? USER_TYPES_REG.HOMEOWNERS : '', [Validators.required]),
       user_firstname  : new FormControl('', [Validators.required]),
       user_lastname   : new FormControl('', [Validators.required]),
       user_email      : new FormControl('', [Validators.required, Validators.pattern(VARS.EMAIL_PATTERN)]),
       user_password   : new FormControl('', [Validators.required]),
-      user_passwordc  : new FormControl('', [Validators.required, StaticService.myCustomValidator('user_password')])
+      user_passwordc  : new FormControl('', [Validators.required, StaticService.myCustomValidator('user_password')]),
+      account_type    : new FormControl(USER_ACCOUNT_TYPE_REG.SUPPLIER),
+      radius          : new FormControl(''),
+      services        : new FormControl(''),
+      isAccepted      : new FormControl(false, Validators.required),
     });
   }
   static getForgotPassForm() {
@@ -185,14 +208,14 @@ export class StaticService {
   static getStepRegisterForm() {
     return new FormGroup({
       regType               : new FormControl('FINISH_STEPS'),
-      user_type             : new FormControl(USER_TYPES_REG.CLIENT, [Validators.required]),
+      user_type             : new FormControl(USER_TYPES_REG.HOMEOWNERS, [Validators.required]),
       registerFirstName     : new FormControl('', [Validators.required]),
       registerLastName      : new FormControl('', [Validators.required]),
       registerAddress       : new FormControl('', [Validators.required]),
       registerPhone         : new FormControl('', [Validators.required]),
       registerEmail         : new FormControl('', [Validators.required, Validators.pattern(VARS.EMAIL_PATTERN)]),
-      registerPassword      : new FormControl('', [Validators.required]),
-      registerPasswordCheck : new FormControl('', [Validators.required, StaticService.myCustomValidator('registerPassword')]),
+      /*registerPassword      : new FormControl('', [Validators.required]),
+      registerPasswordCheck : new FormControl('', [Validators.required, StaticService.myCustomValidator('registerPassword')]),*/
     });
   }
   static getRegisterClientForm() {
@@ -250,12 +273,15 @@ export class StaticService {
       address        : new FormControl('', [Validators.required]),
       phone          : new FormControl('', [Validators.required]),
       email          : new FormControl('', [Validators.required, Validators.pattern(VARS.EMAIL_PATTERN)]),
-      business_name : new FormControl(''),
-      facebook_page : new FormControl(''),
-      hi_pages : new FormControl(''),
+      business_name   : new FormControl(''),
+      facebook_page   : new FormControl(''),
+      hi_pages        : new FormControl(''),
       service_seeking : new FormControl(''),
-      trade : new FormControl(''),
-      areas_serviced : new FormControl(''),
+      trade           : new FormControl(''),
+      areas_serviced  : new FormControl(''),
+      account_type    : new FormControl(USER_ACCOUNT_TYPE_REG.SUPPLIER),
+      radius          : new FormControl(''),
+      services        : new FormControl('')
   });
   }
   static getSettingsForm() {
@@ -368,6 +394,37 @@ export class StaticService {
       return sY + '/' + sM + '/' + sD;
     } else {
       return null;
+    }
+  }
+  static onChangeUserRole(formC, uType) {
+    try {
+      if (uType.value === USER_TYPES_REG.TRADESPEOPLE) {
+        formC.radius.setValidators(Validators.required);
+        formC.radius.updateValueAndValidity();
+        formC.services.setValidators(Validators.required);
+        formC.services.updateValueAndValidity();
+        formC.account_type.clearValidators();
+        formC.account_type.updateValueAndValidity();
+      } else if (uType.value === USER_TYPES_REG.PARTNERS) {
+        formC.account_type.setValidators(Validators.required);
+        formC.account_type.updateValueAndValidity();
+        formC.radius.setValue('');
+        formC.radius.clearValidators();
+        formC.radius.updateValueAndValidity();
+        formC.services.setValue('');
+        formC.services.clearValidators();
+        formC.services.updateValueAndValidity();
+      } else {
+        formC.account_type.clearValidators();
+        formC.account_type.updateValueAndValidity();
+        formC.radius.setValue('');
+        formC.radius.clearValidators();
+        formC.radius.updateValueAndValidity();
+        formC.services.setValue('');
+        formC.services.clearValidators();
+        formC.services.updateValueAndValidity();
+      }
+    } catch (e) {
     }
   }
 }

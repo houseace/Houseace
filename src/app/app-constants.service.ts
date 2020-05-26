@@ -17,9 +17,11 @@ export enum VARS {
   QUOTES_TEL                  = 'tel: 1300304367',
   QUOTES_MAIL                 = 'mailto: quotes@houseace.com.au',
   API_KEY                     = 'WzC#yJYU?y+PF7|',
+  NUMERIC_PATTERN             = '[0-9]*',
+  NUMERIC_DECIMAL_PATTERN     = '^[0-9]\\d*(\\.\\d+)?$'
 }
 export enum FILE_VAR {
-  MULTIPLE_SELECT_DEFAULT     = 1,
+  MULTIPLE_SELECT_DEFAULT     = 5,
   MULTIPLE_SELECT             = 5,
   MAX_SIZE_MB                 = 5,
   MAX_FILE_SIZE_DEFAULT       = 10485760,
@@ -48,7 +50,9 @@ export enum APP_PAGES {
   DETAIL_QUOTE                = '/detail-quote',
   INVOICE_DETAIL              = '/invoice-detail',
   VIEW_PROFILE                = '/view-profile',
-  LOGIN                       = '/login'
+  LOGIN                       = '/login',
+  EDIT_SCOPE                  = '/edit-scope',
+  ADD_SCOPE                   = '/add-scope',
 }
 export enum SITE_URLS {
   BASE_URL                    = 'https://www.houseace.com.au',
@@ -95,7 +99,16 @@ export enum PURPOSE {
   GET_NOTIFICATIONS                     = 'get_notifications',
   CLEAR_NOTIFICATIONS                   = 'clear_notifications',
   CLEAR_MESSAGES                        = 'clear_messages',
-  CALCULATE_PRICE                        = 'calculatePrice',
+  CALCULATE_PRICE                       = 'calculatePrice',
+  GET_SERVICES                          = 'get_services',
+  MARK_SCHEDULE_DONE                    = 'mark_schedule_done',
+  REMOVE_PROJECT_SCOPE                  = 'removeProjectScope',
+  GET_EDIT_QUOTE_DATA                   = 'get_edit_quote_data',
+  ADD_NEW_SCOPE                         = 'add_new_scope',
+  SAVE_EDIT_SCOPE                       = 'save_edit_scope',
+  REMOVE_PROJECT                        = 'remove_project',
+  REMOVE_PEOPLE                         = 'remove_people',
+  DELETE_INVOICE                        = 'delete_invoice',
 }
 export enum VALIDATION_MSG {
   ERR_REQUIRED_FIELD        = '*You must enter a value.',
@@ -115,13 +128,15 @@ export enum VALIDATION_MSG {
   ERR_FILE_SIZE             = 'File size not allowed!',
   ERR_FILE_SIZE_AND_TYPE    = 'One or more file(s) SIZE or TYPE not allowed!',
   ERR_REQUIRED_SELECT_FILE  = '*You must select at least one file.',
+  ERR_TERM_AND_PRIVACY      = '*You must accept term & condition and privacy policy.',
   ERR_LOGOUT                = 'Logged out.',
 }
 export enum IMGS {
   APP_LOGO              = 'assets/logo.png',
   HEADER_LOGO           = 'assets/logo.png',
   DEFAULT_LOADING       = 'assets/houserd.png',
-  DEFAULT_USER          = 'assets/default-ava.png',
+  DEFAULT_USER_OLD      = 'assets/default-ava.png',
+  DEFAULT_USER          = 'assets/default-ava2.png',
   HOUSEWT_COLOR         = 'assets/houserd.png',
   // HOUSEWT_COLOR         = 'assets/housewt-color.png',
   DEFAULT_NO_IMG        = 'assets/default.png',
@@ -186,10 +201,25 @@ export enum USER_TYPES {
   SUPPLIER          = 'Supplier',
   HEAD_CONTRACTOR   = 'Head'
 }
-export enum USER_TYPES_REG {
+/*export enum USER_TYPES_REG {
   CLIENT      = 'Client',
   SUPPLIER    = 'Supplier',
   CONTRACTOR  = 'Contractor'
+}*/
+export enum USER_TYPES_REG {
+  HOMEOWNERS    = 'Client',
+  PARTNERS      = 'Supplier',
+  TRADESPEOPLE  = 'Contractor'
+}
+export enum USER_TYPES_REG_TITLE {
+  'Client'      = 'Homeowners',
+  'Supplier'    = 'Partners',
+  'Contractor'  = 'Tradespeople'
+}
+export enum USER_ACCOUNT_TYPE_REG {
+  SUPPLIER    = 'Supplier',
+  DESIGNER    = 'Designer',
+  CONSULTANT  = 'Consultant'
 }
 export enum JOB_FILTER {
   'ALL'             = '',

@@ -1,12 +1,13 @@
 import {Component, ElementRef, OnInit} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import {ApiService} from '../../Services/api/api.service';
-import {NOTIFICATION_TYPES, PURPOSE, VALIDATION_MSG} from '../../app-constants.service';
+import {NOTIFICATION_TYPES, PURPOSE, VALIDATION_MSG, VARS} from '../../app-constants.service';
 import {HelperService} from '../../Services/Helper/helper.service';
 import {INPUT_TYPE_NAME} from '../../keyOf';
 import {StaticService} from '../../Services/static/static.service';
 import _ from 'lodash';
 import {UploaderService} from '../../Services/uploader/uploader.service';
+import {Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-common-modal',
@@ -76,7 +77,39 @@ export class CommonModalPage implements OnInit {
         break;
       }
       case 'addPeople': {
+        this.cMData.selectedUser = 0;
         this.filterList = this.cMData.udata;
+        this.showFootBtn = 1; this.footBtnTxt = 'Save';
+        if (this.cMData && this.cMData.uType === 'contractor') {
+          this.cModalForm = StaticService.getThisInputForm();
+          this.cModalForm.controls.this_input.setValidators([Validators.pattern(VARS.NUMERIC_DECIMAL_PATTERN), Validators.min(0)]);
+          this.cModalForm.controls.this_input.updateValueAndValidity();
+          const totalPrice = _.toNumber(this.cMData.project_total);
+          const contPrice = _.round(0.70 * totalPrice);
+          StaticService.setFormVal(this.cModalForm.controls, 'this_input', contPrice);
+        }
+        break;
+      }
+      case 'editContractorPrice': {
+        this.cModalForm = StaticService.getThisInputForm();
+        this.showFootBtn = 1; this.footBtnTxt = 'Update Price';
+        const contPrice = (this.cMData && this.cMData.contractor && this.cMData.contractor.contractor_price) ?  this.cMData.contractor.contractor_price : 0;
+        this.cModalForm.controls.this_input.setValidators([Validators.pattern(VARS.NUMERIC_DECIMAL_PATTERN), Validators.min(0)]);
+        this.cModalForm.controls.this_input.updateValueAndValidity();
+        StaticService.setFormVal(this.cModalForm.controls, 'this_input', contPrice);
+        break;
+      }
+      case 'addNewScope': {
+        this.cMData.projectList = [];
+        this.cMData.timeframe = [];
+        this.cMData.isLoading = true;
+        this.api.apiCall(PURPOSE.GET_TEMPLATE, {}, false).then((res: any) => {
+          if (ApiService._successRes(res)) {
+            this.cMData.projectList = res.data;
+            this.cMData.timeframe = res.timeframe;
+          }
+          this.cMData.isLoading = false;
+        }).catch(() => {});
         break;
       }
       default: {
@@ -200,6 +233,61 @@ export class CommonModalPage implements OnInit {
         }
         break;
       }
+      case 'addPeople': {
+        let validateSave = !(this.cMData && this.cMData.uType === 'contractor');
+        if (!validateSave) {
+          if (this.cModalForm.valid && this.cMData.selectedUser) {
+            validateSave = true;
+          } else {
+            if (this.cModalForm.valid && !this.cMData.selectedUser) {
+              this.helper.presentAlert('Please select a user first!');
+            }
+            StaticService.markFormGroupTouched(this.cModalForm, invalidElements);
+          }
+        }
+        if (validateSave && this.cMData.selectedUser) {
+          this.helper.presentLoadingWithOptions().catch(() => {});
+          this.api.apiCall(PURPOSE.ADD_PEOPLE, {
+            current_user_id: this.cMData.current_user_id,
+            project_id: this.cMData.project_id,
+            user_type: this.cMData.uType,
+            new_user_id: this.cMData.selectedUser,
+            contractor_price: (this.cModalForm && this.cModalForm.value.this_input) ? this.cModalForm.value.this_input : 0
+          }, true).then((res: any) => {
+            if (ApiService._successRes(res)) {
+              this.dismissModal(false, res);
+            }
+            this.helper.dismissLoading();
+          }).catch(() => {});
+        }
+        break;
+      }
+      case 'editContractorPrice': {
+        if (this.cModalForm.valid) {
+          this.helper.presentLoadingWithOptions().catch(() => {});
+          this.api.apiCall(PURPOSE.ADD_PEOPLE, {
+            current_user_id: this.cMData.current_user_id,
+            project_id: this.cMData.project_id,
+            user_type: this.cMData.uType,
+            new_user_id: this.cMData.contractor.ID,
+            contractor_price: this.cModalForm.value.this_input
+          }, true).then((res: any) => {
+            if (ApiService._successRes(res)) {
+              this.dismissModal(false, res);
+            }
+            this.helper.dismissLoading();
+          }).catch(() => {});
+        } else {
+          StaticService.markFormGroupTouched(this.cModalForm, invalidElements);
+        }
+        break;
+      }
+      case 'addNewScope': {
+        if (data) {
+          this.dismissModal();
+        }
+        break;
+      }
       default: {
         break;
       }
@@ -267,7 +355,6 @@ export class CommonModalPage implements OnInit {
     if (this.cModalFormC) { return StaticService.formError(this.cModalFormC, fieldName, type, options).msg; }
   }
   onAddPeopele(newUserId) {
-    console.log('cMData', this.cMData);
     this.helper.presentLoadingWithOptions().catch(() => {});
     this.api.apiCall(PURPOSE.ADD_PEOPLE, {
         current_user_id: this.cMData.current_user_id,
