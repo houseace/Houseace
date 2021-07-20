@@ -142,4 +142,5 @@
     </platform>
     <allow-navigation href="http://192.168.43.30:8100" sessionid="8ab6a43d" />
     <allow-navigation href="http://172.16.10.3:8101" sessionid="523d73d0" />
+    <allow-navigation href="http://localhost:8100" sessionid="6d90c78b" />
 </widget>

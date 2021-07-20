@@ -27,6 +27,34 @@
         <ion-icon [name]="sg.iconName" [src]="sg.srcName"></ion-icon>
       </ion-segment-button>
     </ion-segment>
+    <ng-container>
+      <ion-item  class="ion-no-margin ion-no-padding itemMinH20" lines="full" *ngIf="data?.project_team?.length && showTeams">
+        <ion-label class="ion-no-padding">
+          <h2 class="ion-padding-start">Team</h2>
+          <ion-slides [options]="{initialSlide: 0, speed: 1000, slidesPerView: 3.5, pagination: false}" style="height: 100%;">
+            <ion-slide *ngFor="let u of data.project_team; let i = index" class="ion-text-center">
+              <div class="team-div">
+                <ion-avatar>
+                  <img alt="user" [src]="helper._IMG.DEFAULT_NO_IMG" [errorImage]="helper._IMG.DEFAULT_USER" [lazyLoad]="u.user_avatar">
+                </ion-avatar>
+                <ng-container *ngIf="userType === _UT.HEAD_CONTRACTOR || userType === _UT.AGENT">
+                  <ion-button *ngIf="(u?.user_role === _UT.SUPPLIER || u?.user_role === _UT.CONTRACTOR || u?.user_role === _UT.AGENT)" fill="clear" size="small" class="ion-no-margin ion-no-padding floating-trash-icon" (click)="btn('removeTeamUser', u)"><ion-icon name="close" class="_white"></ion-icon></ion-button>
+                </ng-container>
+                <ion-button fill="clear" class="ion-no-margin ion-no-padding floating-call-icon" [href]="'tel:'+u.user_phone">
+                  <ion-icon name="ios-call" color="primary"></ion-icon>
+                </ion-button>
+                <p class="ion-text-center ion-no-margin xSmallText ion-text-wrap">{{u.role}}</p>
+                <p class="ion-text-center ion-no-margin xSmallText boldText ion-text-wrap">{{u.user_firstname}} {{u.user_lastname}}</p>
+                <!--<ng-container *ngIf="userType === _UT.HEAD_CONTRACTOR || userType === _UT.AGENT">
+                  <ion-button *ngIf="(u?.user_role === _UT.SUPPLIER || u?.user_role === _UT.CONTRACTOR || u?.user_role === _UT.AGENT)" size="small" class="ion-text-capitalize noShadowBtn" (click)="btn('removeTeamUser', u)">Delete</ion-button>
+                </ng-container>-->
+                <ion-button *ngIf="(u?.user_role === _UT.CONTRACTOR && userType !== _UT.CONTRACTOR && userType !== _UT.CLIENT)" size="small" class="ion-text-capitalize noShadowBtn" (click)="btn('editContractorPrice', u)">Edit Price</ion-button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+        </ion-label>
+      </ion-item>
+    </ng-container>
     <ng-container *ngIf="(currentSegment === 'Payments') && (userType === _UT.AGENT)">
       <ion-segment (ionChange)="cPaymentTab = $event.detail.value" [value]="cPaymentTab" mode="md">
         <ion-segment-button mode="md" [value]="pt.val" *ngFor="let pt of paymentTabSeg">
@@ -280,32 +308,7 @@
         </div>
       </ng-template>
       <ng-template ngSwitchCase="Activity">
-        <ion-item class="ion-no-margin ion-no-padding itemMinH20" lines="full" *ngIf="data?.project_team?.length">
-          <ion-label class="ion-no-padding">
-            <h2 class="ion-padding-start">Team</h2>
-            <ion-slides [options]="{initialSlide: 0, speed: 1000, slidesPerView: 3.5, pagination: false}">
-              <ion-slide *ngFor="let u of data.project_team; let i = index" class="ion-text-center">
-                <div class="team-div">
-                  <ion-avatar>
-                    <img alt="user" [src]="helper._IMG.DEFAULT_NO_IMG" [errorImage]="helper._IMG.DEFAULT_USER" [lazyLoad]="u.user_avatar">
-                  </ion-avatar>
-                  <ng-container *ngIf="userType === _UT.HEAD_CONTRACTOR || userType === _UT.AGENT">
-                    <ion-button *ngIf="(u?.user_role === _UT.SUPPLIER || u?.user_role === _UT.CONTRACTOR || u?.user_role === _UT.AGENT)" fill="clear" size="small" class="ion-no-margin ion-no-padding floating-trash-icon" (click)="btn('removeTeamUser', u)"><ion-icon name="close" class="_white"></ion-icon></ion-button>
-                  </ng-container>
-                  <ion-button fill="clear" class="ion-no-margin ion-no-padding floating-call-icon" [href]="'tel:'+u.user_phone">
-                    <ion-icon name="ios-call" color="primary"></ion-icon>
-                  </ion-button>
-                  <p class="ion-text-center ion-no-margin xSmallText ion-text-wrap">{{u.role}}</p>
-                  <p class="ion-text-center ion-no-margin xSmallText boldText ion-text-wrap">{{u.user_firstname}} {{u.user_lastname}}</p>
-                  <!--<ng-container *ngIf="userType === _UT.HEAD_CONTRACTOR || userType === _UT.AGENT">
-                    <ion-button *ngIf="(u?.user_role === _UT.SUPPLIER || u?.user_role === _UT.CONTRACTOR || u?.user_role === _UT.AGENT)" size="small" class="ion-text-capitalize noShadowBtn" (click)="btn('removeTeamUser', u)">Delete</ion-button>
-                  </ng-container>-->
-                  <ion-button *ngIf="(u?.user_role === _UT.CONTRACTOR && userType !== _UT.CONTRACTOR && userType !== _UT.CLIENT)" size="small" class="ion-text-capitalize noShadowBtn" (click)="btn('editContractorPrice', u)">Edit Price</ion-button>
-                </div>
-              </ion-slide>
-            </ion-slides>
-          </ion-label>
-        </ion-item>
+       
         <ion-list>
           <ion-item class="itemMinH25" lines="none" *ngIf="userType !== _UT.CONTRACTOR && userType !== _UT.CLIENT">
             <ion-button slot="start" fill="clear" class="ion-text-capitalize ion-no-margin noPaddingStart" (click)="OpenAddPeopleSelect()"><ion-icon name="add-circle-outline"></ion-icon> Add People
@@ -529,7 +532,7 @@
     </ion-item>
     </form>
   </ion-toolbar>
-  <ion-tab-bar slot="bottom" *ngIf="((data?.status && data.scope.can_edit_status && userType === _UT.AGENT) || (data?.is_secure_booking && userType === _UT.AGENT) || (data?.is_complete && data.scope.can_edit_status && userType === _UT.AGENT))">
+  <ion-tab-bar slot="bottom" *ngIf="((data?.status && data.scope.can_edit_status && userType === _UT.AGENT) || (data?.is_secure_booking && userType === _UT.AGENT) || (data?.is_complete && data.scope.can_edit_status && userType === _UT.AGENT)) && !showTeams">
     <ion-tab-button layout="icon-top" class="btnSecondary" *ngIf="data?.status && data.scope.can_edit_status && userType === _UT.AGENT" (click)="presentAlert('change_status')">
       <ion-icon name="md-create"></ion-icon>
       <ion-label>{{data?.status_string}}</ion-label>

@@ -238,7 +238,7 @@ export enum QUOTE_STATUS {
   CLOSED    = 'Closed',
 }
 export enum MANAGE_QUOTE_STATUS {
-  'Pre Quote'       = 'quote',
+  'Estimate'       = 'quote',
   'Final Quote'     = 'pending',
   'Accepted Quote'  = 'live',
   'Completed'       = 'completed',

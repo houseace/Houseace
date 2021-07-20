@@ -38,6 +38,7 @@ export class DetailQuotePage implements OnInit {
   selectedStar: any = 5; showReviewForm = false;
   paymentTabSeg = [{val: 'PaymentSubTab', title: 'Payments'}, {val: 'otherPaymentSubTab', title: 'Other Payment'}]; cPaymentTab = 'PaymentSubTab';
   msgInterval: any; notInterval: any;
+  showTeams=false;
   constructor(private api: ApiService,
               public helper: HelperService,
               private modalService: ModalService,
@@ -64,6 +65,11 @@ export class DetailQuotePage implements OnInit {
           ];
         }
         this.currentSegment = (routParams.selectedSegment) ? routParams.selectedSegment : this.currentSegment;
+        if(this.currentSegment === 'Activity'){
+          this.showTeams=true;
+        }else{
+          this.showTeams=false;
+        }
         this.cPaymentTab = (this.userType === USER_TYPES.CONTRACTOR) ? 'otherPaymentSubTab' : this.cPaymentTab;
         this.getActivities();
         this.getMessage();
@@ -78,6 +84,11 @@ export class DetailQuotePage implements OnInit {
   }
   onChangeSegment(ev) {
     this.currentSegment = ev.detail.value;
+    if(this.currentSegment === 'Activity'){
+      this.showTeams=true;
+    }else{
+      this.showTeams=false;
+    }
     this.scrollBottom();
   }
   scrollBottom(timeout = 0) {
